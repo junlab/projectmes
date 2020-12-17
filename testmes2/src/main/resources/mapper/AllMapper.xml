@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AllMapper">
+
+	<resultMap type="com.example.Entity.ProdReq" id="ProdReqMap">
+		<id column="PROD_NAME" property="prodName"/>
+		<id column="AMOUNT" property="amount"/>
+		<id column="ADD_DATE" property="addDate"/>
+	</resultMap>
+	<resultMap type="com.example.Entity.OrderMate" id="OrderMateMap">
+		<id column="RAW_MATE_NAME" property="rawMateName"/>
+		<id column="TOTAL_AMOUNT" property="totalAmt"/>
+		<id column="INCOMIMG_AMOUNT" property="incomingAmt"/>
+		<id column="PARENT_NODE" property="parentNode"/>
+		<id column="PROD_NAME" property="prodName"/>
+		<id column="ADD_DATE" property="addDate"/>
+		<id column="MATE_TYPE_CODE" property="mateTypeCode"/>
+		<id column="NO_" property="_no"/>
+	</resultMap>
+	<resultMap type="com.example.Entity.TempIncome" id="TempIncomeMap">
+		<id column="RAW_MATE_NAME" property="rawMateName"/>
+		<id column="MY_INCOME_AMOUNT" property="myIncomeAmt"/>
+		<id column="PARENT_NODE" property="parentNode"/>
+		<id column="PASS_AMOUNT" property="passAmt"/>
+		<id column="ADD_DATE" property="addDate"/>
+		<id column="MATE_TYPE_CODE" property="mateTypeCode"/>
+	</resultMap>
+	<resultMap type="com.example.Entity.Materials" id="MaterialsMap">
+		<id column="MATE_NAME" property="mateName"/>
+		<id column="MATE_CODE" property="mateCode"/>
+		<id column="MATE_TYPE_CODE" property="mateTypeCode"/>
+		<id column="MATE_TYPE_NAME" property="mateTypeName"/>
+		<!-- <id column="MY_INCOME_AMOUNT" property="myIncomeAmt"/>
+		<id column="PASS_AMOUNT" property="passAmt"/> -->
+		<id column="PARENT_NODE" property="parentNode"/>	
+		<id column="NEED_PROCESS_CODE" property="processCode"/>
+		<id column="ADD_DATE" property="addDate"/>
+		<id column="WORK_STATE" property="workState"/>
+		<id column="AMOUNT" property="amt"/>
+		<id column="MATE_NO" property="mateNo"/>
+	</resultMap>
+	<resultMap type="com.example.Entity.TempProcess" id="TempProcessMap">
+		<id column="MATE_NAME" property="mateName"/>
+		<id column="MATE_CODE" property="mateCode"/>
+		<id column="MATE_TYPE_CODE" property="mateTypeCode"/>
+		<id column="AMOUNT" property="amt"/>
+		<id column="NEED_PROCESS_CODE" property="processCode"/>
+		<id column="PARENT_NODE" property="parentNode"/>
+		<id column="ADD_DATE" property="addDate"/>
+	</resultMap>
+	<resultMap type="com.example.Entity.EndProd" id="EndProdMap">
+		<id column="PROD_NAME" property="prodName"/>
+		<id column="AMOUNT" property="amount"/>
+		<id column="ADD_DATE" property="addDate"/>
+		<id column="PROD_NO" property="_no"/>
+	</resultMap>
+	
+	
+	
+	
+	<select id="getTestVO" parameterType="int" resultType="String">
+		SELECT TESTNAME FROM TEST WHERE TESTNO=1111
+	</select>
+	
+	<select id="add_list" parameterType="com.example.Entity.ProdReq" resultMap="ProdReqMap">
+		SELECT * FROM PRODREQ cascade
+	</select>
+
+	<insert id="insert" parameterType="com.example.Entity.ProdReq">
+		INSERT INTO PRODREQ VALUES (#{prodName}, #{amount}, #{addDate})
+	</insert> 
+	
+	<update id="insert_order_glasses" parameterType="com.example.Entity.ProdReq">
+		<selectKey keyColumn="_NO" keyProperty="_no" resultType="int" order="BEFORE"> 
+			SELECT ROUND(DBMS_RANDOM.VALUE(0, 999)) FROM DUAL
+		</selectKey>
+		INSERT INTO ORDER_MATE_DB (RAW_MATE_NAME, TOTAL_AMOUNT, PROD_NAME, INCOMIMG_AMOUNT, PARENT_NODE, ADD_DATE, MATE_TYPE_CODE) 
+		select MATERIALS.MATE_NAME, P.AMOUNT*BOM_INFO.RAW_AMOUNT as total, P.PROD_NAME, 0,
+        CASE
+                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_GLASSES' THEN '안경'
+                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_GLASSES_FRAME' THEN '안경테'
+                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_GLASSES_LENS' THEN '안경렌즈'
+        END AS PARENT_MATE_NODE , P.ADD_DATE, MATERIALS_TYPE.MATE_TYPE_CODE 
+        FROM PRODREQ P, BOM_INFO 
+        inner join MATERIALS on BOM_INFO.CHILD_MATE_CODE=MATERIALS.MATE_CODE 
+        inner join MATERIALS_TYPE on MATERIALS.MATE_TYPE_CODE=MATERIALS_TYPE.MATE_TYPE_CODE
+        WHERE P.PROD_NAME=#{prodName} AND BOM_INFO.PARENT_MATE_CODE LIKE 'CODE_GLASSES%' 
+                                AND MATERIALS.MATE_TYPE_CODE!='MATE_GOODS'
+	</update>
+	<update id="insert_order_pen" parameterType="com.example.Entity.ProdReq">
+		<selectKey keyColumn="_NO" keyProperty="_no" resultType="int" order="BEFORE"> 
+			SELECT ROUND(DBMS_RANDOM.VALUE(0, 999)) FROM DUAL
+		</selectKey>
+		INSERT INTO ORDER_MATE_DB (RAW_MATE_NAME, TOTAL_AMOUNT, PROD_NAME, INCOMIMG_AMOUNT, PARENT_NODE, ADD_DATE, MATE_TYPE_CODE) 
+		select MATERIALS.MATE_NAME, P.AMOUNT*BOM_INFO.RAW_AMOUNT as total, P.PROD_NAME, 0,
+        CASE
+                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_PEN' THEN '볼펜'
+                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_PEN_COVER' THEN '볼펜뚜껑'
+                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_PEN_BODY' THEN '볼펜몸통'
+        END AS PARENT_MATE_NODE , P.ADD_DATE, MATERIALS_TYPE.MATE_TYPE_CODE
+        FROM PRODREQ P, BOM_INFO 
+        inner join MATERIALS on BOM_INFO.CHILD_MATE_CODE=MATERIALS.MATE_CODE 
+        inner join MATERIALS_TYPE on MATERIALS.MATE_TYPE_CODE=MATERIALS_TYPE.MATE_TYPE_CODE
+        WHERE P.PROD_NAME=#{prodName} AND BOM_INFO.PARENT_MATE_CODE LIKE 'CODE_PEN%' 
+                                AND MATERIALS.MATE_TYPE_CODE!='MATE_GOODS'
+	</update>
+             <!--    WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_PEN_LEAD' THEN '볼펜심' -->
+	<delete id="del_addlist" parameterType="java.util.List">
+		DELETE FROM PRODREQ
+		<where>
+		<foreach item="item" index="index" collection="list"
+		      open="" close="" separator="OR">
+		        ADD_DATE = #{item}
+		</foreach>
+		</where>	
+	</delete>
+	
+	
+	
+	<delete id="del_orderlist" parameterType="java.util.List">
+		DELETE FROM ORDER_MATE_DB
+		<where>
+		<foreach item="item" index="index" collection="list"
+		      open="" close="" separator="OR">
+		        ADD_DATE = #{item}
+		</foreach>
+		</where>	
+	</delete>
+	<select id="order_list" parameterType="com.example.Entity.OrderMate" resultMap="OrderMateMap">
+		SELECT * FROM ORDER_MATE_DB
+	</select>
+	
+	
+	
+	<update id="insert_temp_income" parameterType="com.example.Entity.TempIncome">
+		MERGE INTO 
+			TEMP_INCOME_DB  
+		USING DUAL 
+		   	ON (RAW_MATE_NAME = #{rawMateName} AND PARENT_NODE = #{parentNode} AND ADD_DATE = #{addDate})
+		   	WHEN MATCHED THEN     
+		        UPDATE SET     
+		                MY_INCOME_AMOUNT =  MY_INCOME_AMOUNT + #{myIncomeAmt}                     		        
+		  	WHEN NOT MATCHED THEN
+				INSERT (RAW_MATE_NAME, PARENT_NODE, MY_INCOME_AMOUNT, PASS_AMOUNT, ADD_DATE, MATE_TYPE_CODE) 
+				VALUES 
+				(#{rawMateName}, #{parentNode}, #{myIncomeAmt}, 0, #{addDate}, (SELECT MATE_TYPE_CODE FROM MATERIALS WHERE MATE_NAME=#{rawMateName}))
+	</update> 
+	<select id="temp_incomelist" parameterType="com.example.Entity.TempIncome" resultMap="TempIncomeMap">
+		SELECT * FROM TEMP_INCOME_DB
+	</select>
+	
+	
+	<update id="insert_materials" parameterType="com.example.Entity.Materials">
+		<selectKey keyColumn="MATE_NO" keyProperty="mateNo" resultType="int" order="BEFORE"> 
+			SELECT ROUND(DBMS_RANDOM.VALUE(0, 999)) FROM DUAL
+		</selectKey>
+		<![CDATA[
+		MERGE INTO 
+			MATERIALS_STORE_DB  
+		USING DUAL 
+		   	ON (MATE_NAME = #{mateName} AND PARENT_NODE = #{parentNode} AND ADD_DATE = #{addDate})
+		   	WHEN MATCHED THEN     
+		        UPDATE SET     
+		                AMOUNT =  AMOUNT + #{passAmt}                     		        
+		  	WHEN NOT MATCHED THEN
+				INSERT (MATE_CODE, NEED_PROCESS_CODE, MATE_NAME, MATE_TYPE_CODE, AMOUNT, PARENT_NODE, WORK_STATE, 
+											ADD_DATE, MATE_NO) 
+				VALUES (
+				(SELECT MATE_CODE as mateCode FROM MATERIALS WHERE MATE_NAME=#{mateName}),	
+				(SELECT NEED_PROCESS_CODE FROM MATERIALS WHERE MATE_NAME=#{mateName}),
+				#{mateName}, 
+				(SELECT MATE_TYPE_CODE as mateTypeCode FROM MATERIALS WHERE MATE_NAME=#{mateName}),	
+				#{passAmt}, #{parentNode}, '미처리', #{addDate}, #{mateNo})	
+		]]>	
+	</update> 
+	<!-- <update id="change_tempincomelist" parameterType="com.example.Entity.Materials">
+		UPDATE TEMP_INCOME_DB SET PASS_AMOUNT = PASS_AMOUNT + #{passAmt}
+		WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
+	</update> -->
+	<delete id="delete_tempincomelist" parameterType="com.example.Entity.Materials">
+		DELETE FROM TEMP_INCOME_DB WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
+	</delete>
+	
+	<update id="change_orderincomelist" parameterType="com.example.Entity.Materials">
+		UPDATE ORDER_MATE_DB SET INCOMIMG_AMOUNT = INCOMIMG_AMOUNT + #{passAmt}
+		WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
+	</update>
+	<!-- <delete id="delete_orderincomelist" parameterType="com.example.Entity.Materials">
+		DELETE FROM ORDER_MATE_DB WHERE TOTAL_AMOUNT = 
+			(SELECT INCOMIMG_AMOUNT FROM ORDER_MATE_DB 
+			WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode})
+			AND RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
+	</delete> -->
+	
+	
+	
+	<select id="materials_list" parameterType="com.example.Entity.Materials" resultMap="MaterialsMap">
+		SELECT * FROM MATERIALS_STORE_DB
+	</select>
+	
+	
+	
+	
+	<insert id="insert_temp_abrasion_glassesframe" parameterType="com.example.Entity.Materials">
+		INSERT INTO TEMP_PROCESS_DB (MATE_NAME, MATE_CODE, MATE_TYPE_CODE, AMOUNT, NEED_PROCESS_CODE, ADD_DATE)
+		VALUES (
+			#{parentNode},
+			(select MATE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			(select MATE_TYPE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			FLOOR(#{amt}/2),
+			(select NEED_PROCESS_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{addDate}
+		)
+	</insert>
+
+	<insert id="insert_temp_abrasion_lens" parameterType="com.example.Entity.Materials">
+		INSERT INTO TEMP_PROCESS_DB (MATE_NAME, MATE_CODE, MATE_TYPE_CODE, AMOUNT, NEED_PROCESS_CODE, ADD_DATE)
+		VALUES (
+			#{parentNode},
+			(select MATE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			(select MATE_TYPE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{amt}*2,
+			(select NEED_PROCESS_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{addDate}
+		)     	
+	</insert>
+	<insert id="insert_temp_abrasion" parameterType="com.example.Entity.Materials">
+		INSERT INTO TEMP_PROCESS_DB (MATE_NAME, MATE_CODE, MATE_TYPE_CODE, AMOUNT, NEED_PROCESS_CODE, ADD_DATE)
+		VALUES (
+			#{parentNode},
+			(select MATE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			(select MATE_TYPE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{amt},
+			(select NEED_PROCESS_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{addDate}
+		)     	
+	</insert>
+	<update id="update_materials_glassesframe" parameterType="com.example.Entity.Materials">
+		UPDATE MATERIALS_STORE_DB SET AMOUNT=AMOUNT-(FLOOR(AMOUNT/2)*2) WHERE MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate}
+	</update>
+	<delete id="del_materials_abrasion" parameterType="com.example.Entity.Materials">
+		DELETE FROM MATERIALS_STORE_DB WHERE MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate}
+	</delete>
+	<update id="update_orderlist" parameterType="com.example.Entity.Materials">
+		UPDATE ORDER_MATE_DB SET INCOMIMG_AMOUNT=(select AMOUNT from MATERIALS_STORE_DB WHERE MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate}) 
+											WHERE RAW_MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate}
+	</update>
+	<!-- UPDATE ORDER_MATE_DB SET INCOMIMG_AMOUNT=0 WHERE RAW_MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND AND ADD_DATE=#{addDate} -->
+	
+	
+	
+	<insert id="insert_temp_assemble_glasses" parameterType="com.example.Entity.Materials">
+		INSERT INTO TEMP_PROCESS_DB (MATE_NAME, MATE_CODE, MATE_TYPE_CODE, AMOUNT, NEED_PROCESS_CODE, ADD_DATE)
+		VALUES (
+			#{parentNode},
+			(select MATE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			(select MATE_TYPE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{amt},
+			(select NEED_PROCESS_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{addDate}
+		)
+	</insert>
+	<delete id="del_materials_assemble_glasses" parameterType="com.example.Entity.Materials">
+		DELETE FROM MATERIALS_STORE_DB WHERE MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate} AND AMOUNT=#{amt}
+	</delete>
+
+	<insert id="insert_temp_assemble_pen" parameterType="com.example.Entity.Materials">
+		INSERT INTO TEMP_PROCESS_DB (MATE_NAME, MATE_CODE, MATE_TYPE_CODE, AMOUNT, NEED_PROCESS_CODE, ADD_DATE)
+		VALUES (
+			#{parentNode},
+			(select MATE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			(select MATE_TYPE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			FLOOR(#{amt}/2),
+			(select NEED_PROCESS_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{addDate}
+		)
+	</insert>
+	<delete id="del_materials_assemble_pen" parameterType="com.example.Entity.Materials">
+		DELETE FROM MATERIALS_STORE_DB WHERE MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate} AND AMOUNT=#{amt}
+	</delete>
+	
+	<insert id="insert_temp_assemble_penlead" parameterType="com.example.Entity.Materials">
+		INSERT INTO TEMP_PROCESS_DB (MATE_NAME, MATE_CODE, MATE_TYPE_CODE, AMOUNT, NEED_PROCESS_CODE, ADD_DATE)
+		VALUES (
+			#{parentNode},
+			(select MATE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			(select MATE_TYPE_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{amt},
+			(select NEED_PROCESS_CODE from MATERIALS where MATE_NAME = #{parentNode}),
+			#{addDate}
+		)
+	</insert>
+	
+	
+	
+	
+	
+	
+	<select id="temp_processlist" parameterType="com.example.Entity.TempProcess" resultMap="TempProcessMap">
+		SELECT * FROM TEMP_PROCESS_DB
+	</select>
+
+	<update id="insert_assemble_mate" parameterType="com.example.Entity.TempProcess">
+		<selectKey keyColumn="MATE_NO" keyProperty="mateNo" resultType="int" order="BEFORE"> 
+			SELECT ROUND(DBMS_RANDOM.VALUE(0, 999)) FROM DUAL
+		</selectKey>
+		<![CDATA[
+		MERGE INTO 
+			MATERIALS_STORE_DB  
+		USING DUAL 
+		   	ON (MATE_NAME = #{mateName} AND ADD_DATE = #{addDate})
+		   	WHEN MATCHED THEN     
+		        UPDATE SET     
+		                AMOUNT =  AMOUNT + #{amt}                     		        
+		  	WHEN NOT MATCHED THEN
+				INSERT (MATE_CODE, NEED_PROCESS_CODE, MATE_NAME, MATE_TYPE_CODE, AMOUNT, PARENT_NODE, WORK_STATE, 
+											ADD_DATE, MATE_NO) 
+				VALUES (
+				(SELECT MATE_CODE as mateCode FROM MATERIALS WHERE MATE_NAME=#{mateName}),	
+				(SELECT NEED_PROCESS_CODE as processCode FROM MATERIALS WHERE MATE_NAME=#{mateName}),
+				#{mateName}, 
+				(SELECT MATE_TYPE_CODE as mateTypeCode FROM MATERIALS WHERE MATE_NAME=#{mateName}),	
+				#{amt},
+				(SELECT 
+				CASE
+	                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_GLASSES' THEN '안경'
+	                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_PEN' THEN '볼펜'
+	                WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_PEN_LEAD' THEN '볼펜심'
+        		END as PARENT_MATE_CODE FROM BOM_INFO WHERE CHILD_MATE_CODE=(SELECT MATE_CODE as mateCode FROM MATERIALS WHERE MATE_NAME=#{mateName})), 
+				'미처리', #{addDate}, #{mateNo})	
+		]]>	
+	</update> <!-- (SELECT PARENT_MATE_CODE FROM BOM_INFO WHERE CHILD_MATE_CODE=(SELECT MATE_CODE as mateCode FROM MATERIALS WHERE MATE_NAME=#{mateName})),  -->
+	<delete id="delete_tempprocesslist" parameterType="com.example.Entity.TempProcess">
+		DELETE FROM TEMP_PROCESS_DB WHERE MATE_NAME=#{mateName} AND ADD_DATE=#{addDate}
+	</delete>
+	<update id="change_orderlist_process" parameterType="com.example.Entity.Materials">
+		UPDATE ORDER_MATE_DB SET INCOMIMG_AMOUNT = INCOMIMG_AMOUNT + #{amt}
+		WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate}
+	</update>
+	
+	
+	
+	<insert id="insert_prod" parameterType="com.example.Entity.EndProd">
+		<selectKey keyColumn="_NO" keyProperty="_no" resultType="int" order="BEFORE"> 
+			SELECT ROUND(DBMS_RANDOM.VALUE(0, 999)) FROM DUAL
+		</selectKey>
+		INSERT INTO END_PROD_DB(PROD_NAME, AMOUNT, ADD_DATE, PROD_NO) VALUES (#{prodName}, #{amount}, #{addDate}, #{_no})
+	</insert>
+	<delete id="del_prod_req" parameterType="com.example.Entity.EndProd">
+		DELETE FROM PRODREQ WHERE PROD_NAME=#{prodName} AND AMOUNT=#{amount} AND ADD_DATE=#{addDate}
+	</delete>
+	<delete id="del_tempprocessprod" parameterType="com.example.Entity.EndProd">
+		DELETE FROM TEMP_PROCESS_DB WHERE MATE_NAME=#{prodName} AND ADD_DATE=#{addDate}
+	</delete>
+	
+</mapper>

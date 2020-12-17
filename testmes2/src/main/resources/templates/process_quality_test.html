@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>::: Spring with MyBatis :::</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <h3>공정처리 품질 검사 화면</h3>
+
+    <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
+    <h4>임시 공정처리 리스트</h4>
+            <table class="board_list">
+                <thead>
+                    <tr>
+                    	<th>선택</th>
+                    	<th>자재명</th>
+                    	<th>공정수량</th>
+                    	<th>필요 공정</th>
+                        <th>자재 타입</th>
+                        <th>발주일</th>
+                    </tr>
+                </thead>
+                <tbody id="temp_process_ajax">
+                
+                </tbody>
+            </table>
+            <div class="paging">
+            	<div>
+		            		<span id="income_amt_text">입고량</span>
+					<input class="bt" type="button" id="btn_pass_process" 
+					name="btn_pass_process" value="통과"/>
+				</div>
+			</div>
+    </div>
+    
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    	<script type="text/javascript">
+    	
+    	function doOpenCheck(chk){
+    	    var obj = document.getElementsByName("temp_process_chk");
+    	    for(var i=0; i<obj.length; i++){
+    	        if(obj[i] != chk){
+    	            obj[i].checked = false;
+    	        }
+    	    }
+    	    
+    	    var tr = $(chk).parent().parent();
+			var td = tr.children();
+			var incomeAmt = td.eq(2).text();
+			//$("#pass_process_amt").val(incomeAmt);
+			
+    	    if(chk.checked == false){
+    	    	$("#income_process_amt").val("");
+    	    	$("#pass_process_amt").val("");
+    	    }
+    	    
+    	}
+    	
+    	function load() { 
+    		$.ajax({
+	            url: "/tempprocesslist",
+	            type: "POST",
+	            dataType: "json",
+	            success: function(data){
+	            	$("#temp_process_ajax").children().remove()
+	            	var tags = '';
+	            	for(var i in data){
+	            		
+	            		var mateTypeName='';
+	            		switch(data[i].mateTypeCode){
+	            			case 'MATE_RAW':
+	            				mateTypeName = '원자재';
+	            				break;
+	            			case 'MATE_HALF':
+	            				mateTypeName = '반제품';
+	            				break;
+	            			case 'MATE_GOODS':
+	            				mateTypeName = '제품';
+	            				break;
+	            		}
+	            		
+	            		var processName='';
+	            		switch(data[i].processCode){
+	            			case 'ASSEMBLE':
+	            				processName = '조립';
+	            				break;
+	            			case 'ABRASION':
+	            				processName = '연마';
+	            				break;
+	            			case 'END':
+	            				processName = '없음';
+	            				break;
+	            		}
+
+	            		tags += '<tr>'
+	            		tags += '<td><input type="checkbox" id="temp_process_chk" name="temp_process_chk" onclick="doOpenCheck(this);"/></td>'
+	            		tags += '<td>'+data[i].mateName+'</td>'+
+	            				'<td>'+data[i].amt+'</td>'+
+	            				'<td>'+processName+'</td>'+
+	            				'<td>'+mateTypeName+'</td>'+
+	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
+	            		tags += '</tr>'
+	            	}
+	            	$("#temp_process_ajax").append(tags);
+	            },
+	            error: function(){
+	                alert("리스트 조회 에러");
+	            }
+	        });
+    	}
+    	
+    	
+    	$('#btn_pass_process').on('click', function(){
+    		var tr = $("input[name='temp_process_chk']:checked").parent().parent();
+			var td = tr.children();
+
+    		 // 들어오는 품질검사 목록이 최종 제품일경우
+				if((td.eq(1).text()=='안경') || (td.eq(1).text()=='볼펜')){
+					//var passAmt = parseInt($("#pass_process_amt").val());
+	    			//alert(passAmt);
+	    				
+	    			var arr = new Array();
+	    			var mateName = td.eq(1).text();
+	    			var prodAmt = td.eq(2).text();
+	    			var addDate = td.eq(5).text();
+	    			arr.push(mateName);
+	    			arr.push(prodAmt);
+	    			arr.push(addDate);
+	    			
+	    			for(var i=0; i<arr.length; i++){
+	    				console.log(arr[i]);
+	    			}
+	    			
+	    			var jsondate = JSON.stringify(arr);
+	                var arrjson = {"prod_success_id" : arr}
+	                console.log(arrjson);
+	                
+	                $.ajax({
+	                	type: "POST",
+	                	url: "/insert_prod",
+	                	contentType : "application/json",
+	                    data: JSON.stringify(arrjson),  
+	                    success: function(data){
+	                    	alert('제품 품질검사 통과');
+	                    	load();
+	                    },
+	                    error: function(){alert("서버통신 오류");}
+	                });	
+
+	                $("#income_process_amt").val("");
+	    	    	$("#pass_process_amt").val("");
+	    	    	
+	    		}else{
+	    			
+	    			var passAmt = $("#pass_process_amt").val();
+	    			//alert(passAmt);
+	    				
+	    			var arr = new Array();
+	    			var mateName = td.eq(1).text();
+	    			var passAmt = td.eq(2).text();
+	    			var addDate = td.eq(5).text();
+	    			arr.push(mateName);
+	    			arr.push(passAmt);
+	    			arr.push(addDate);
+	    			
+	    			
+	    			for(var i=0; i<arr.length; i++){
+	    				console.log(arr[i]);
+	    			}
+	    			
+	    			var jsondate = JSON.stringify(arr);
+	                var arrjson = {"assemblemate_id" : arr}
+	                console.log(arrjson);
+	                
+	                $.ajax({
+	                	type: "POST",
+	                	url: "/insert_assemble_mate",
+	                	contentType : "application/json",
+	                    data: JSON.stringify(arrjson),  
+	                    success: function(data){
+	                    	alert('자재 입고처리 성공');
+	                    	load();
+	                    },
+	                    error: function(){alert("서버통신 오류");}
+	                });	
+
+	                $("#income_process_amt").val("");
+	    	    	$("#pass_process_amt").val("");
+	    		}
+				
+    		
+    		
+    		
+    		
+	    }); 
+    	
+    	$(document).ready(function(){
+            load();
+
+        });
+    	
+    	</script>
+	</div>
+</body>
+</html>

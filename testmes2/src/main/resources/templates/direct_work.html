@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>::: Spring with MyBatis :::</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <h3>작업지시 화면</h3>
+	<h4>발주 자재 현황의 개수와 맞아야 동작 가능</h4>
+    <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
+    <h4>자재 리스트</h4>
+            <table class="board_list">
+                <thead>
+                    <tr>
+                    	<th>선택</th>
+                    	<th>자재명</th>
+                    	<th>자재 타입</th>
+                    	<th>필요 공정</th>
+                    	<th>수량</th>
+                    	<th>상위 자재명</th>
+                    	<!-- <th>상태</th> -->
+                        <th>발주일</th>
+                    </tr>
+                </thead>
+                <tbody id="marterialslist_ajax">
+                
+                </tbody>
+            </table>
+            <div class="paging">
+            	<div>
+	            	<input class="bt" type="button" id="btn_abrasion" 
+					name="btn_income" value="연마" style="margin-right: 50px;"/>
+					<input class="bt" type="button" id="btn_assemble" 
+					name="btn_income" value="조립" style="margin-left: 50px;"/>
+				</div>
+			</div>
+    </div>
+    
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    	<script type="text/javascript">
+    	
+    	
+    	function load() { 
+    		$.ajax({
+	            url: "/marterialslist",
+	            type: "POST",
+	            dataType: "json",
+	            success: function(data){
+	            	$("#marterialslist_ajax").children().remove()
+	            	var tags = '';
+	            	for(var i in data){
+	            		
+	            		var mateTypeName='';
+	            		switch(data[i].mateTypeCode){
+	            			case 'MATE_RAW':
+	            				mateTypeName = '원자재';
+	            				break;
+	            			case 'MATE_HALF':
+	            				mateTypeName = '반제품';
+	            				break;
+	            			case 'MATE_GOODS':
+	            				mateTypeName = '제품';
+	            				break;
+	            		}
+	            		
+	            		var processName='';
+	            		switch(data[i].processCode){
+	            			case 'ASSEMBLE':
+	            				processName = '조립';
+	            				break;
+	            			case 'ABRASION':
+	            				processName = '연마';
+	            				break;
+	            			case 'END':
+	            				processName = '없음';
+	            				break;
+	            		}
+	            		
+	            		tags += '<tr>'
+	            		tags += '<td><input type="checkbox" id="temp_process_chk" name="temp_process_chk"/></td>'
+	            		tags += '<td>'+data[i].mateName+'</td>'+
+	            				'<td>'+mateTypeName+'</td>'+
+	            				'<td>'+processName+'</td>'+
+	            				'<td>'+data[i].amt+'</td>'+
+	            				'<td>'+data[i].parentNode+'</td>'+
+	            				//'<td>'+data[i].workState+'</td>'+
+	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
+	            		tags += '</tr>'
+	            	}
+	            	$("#marterialslist_ajax").append(tags);
+	            },
+	            error: function(){
+	                alert("리스트 조회 에러");
+	            }
+	        });
+    	}
+        
+    	// 연마 버튼
+    	$('#btn_abrasion').on('click', function(){ 
+    		var cnt = $("input[name='temp_process_chk']:checked").length;
+            var tempData = new Array();
+
+			$("input[name='temp_process_chk']:checked").each(function(i) {
+	            var tr = $("input[name='temp_process_chk']:checked").parent().parent().eq(i);
+				var td = tr.children();
+				var arr = new Array();
+				
+				if(td.eq(2).text()=='원자재' && td.eq(3).text()=='연마' && td.eq(5).text()!='안경' && td.eq(5).text()!='볼펜' ){
+					if(td.eq(5).text()=='안경테' && (parseInt(td.eq(4).text())==1)){
+						alert("최소 공정 개수에 맞지않습니다.");
+					}else{
+						arr.push(td.eq(1).text());
+						arr.push(td.eq(2).text());
+						arr.push(td.eq(3).text());
+						arr.push(td.eq(4).text());
+						arr.push(td.eq(5).text());
+						arr.push(td.eq(6).text());
+						tempData.push(arr);	
+					}
+				}else{
+					alert("올바르지 못한 자재가 존재합니다.");
+					//break;
+				}
+	        }); 
+
+			var tempDataJson = {"temp_process_id" : tempData}
+            console.log(JSON.stringify(tempDataJson));
+
+            $.ajax({
+            	type: "POST",
+            	url: "/insert_tempprocess",
+            	contentType : "application/json",
+                data: JSON.stringify(tempDataJson),  
+                success: function(data){
+                	alert('임시 공정처리 성공');
+                	load();
+                },
+                error: function(){alert("서버통신 오류");}
+            }); 
+	    });
+    	
+    	// 조립 버튼
+    	$('#btn_assemble').on('click', function(){ 
+    		var cnt = $("input[name='temp_process_chk']:checked").length;
+            var tempData = new Array();
+            
+			var glassesFrameCnt=0;
+			var penCoverCnt=0;
+			var penBodyCnt=0;
+			var penLeadCnt=0;
+			var penSpringCnt=0;
+            
+            $("input[name='temp_process_chk']:checked").each(function(i) {
+	            var tr = $("input[name='temp_process_chk']:checked").parent().parent().eq(i);
+				var td = tr.children();
+				if(td.eq(1).text()=='안경테'){
+					glassesFrameCnt=parseInt(td.eq(4).text());
+				}else if(td.eq(1).text()=='스프링'){
+					penSpringCnt=parseInt(td.eq(4).text());
+				}else if(td.eq(1).text()=='볼펜심'){
+					penLeadCnt=parseInt(td.eq(4).text());
+				}else if(td.eq(1).text()=='볼펜몸통'){
+					penBodyCnt=parseInt(td.eq(4).text());
+				}else if(td.eq(1).text()=='볼펜뚜껑'){
+					penCoverCnt=parseInt(td.eq(4).text());
+				}
+				
+            });
+			
+            console.log(glassesFrameCnt+' '+penSpringCnt+' '+penLeadCnt+' '+penBodyCnt+' '+penCoverCnt);
+            
+            
+			$("input[name='temp_process_chk']:checked").each(function(i) {
+	            var tr = $("input[name='temp_process_chk']:checked").parent().parent().eq(i);
+				var td = tr.children();
+				var arr = new Array();
+				
+				if(td.eq(3).text()=='조립'){
+					if(td.eq(5).text()=='안경' && cnt==4){
+						if((td.eq(1).text()=='안경렌즈' && (parseInt(td.eq(4).text())==2*glassesFrameCnt)) || (td.eq(1).text()=='나사' && (parseInt(td.eq(4).text())==2*glassesFrameCnt)) || 
+								(td.eq(1).text()=='코받침' && (parseInt(td.eq(4).text())==2*glassesFrameCnt)) || td.eq(1).text()=='안경테') {
+							arr.push(td.eq(1).text());
+							arr.push(td.eq(2).text());
+							arr.push(td.eq(3).text());
+							arr.push(td.eq(4).text());
+							arr.push(td.eq(5).text()); 
+							arr.push(td.eq(6).text());
+							tempData.push(arr);
+						}
+					}else if(td.eq(5).text()=='볼펜' && cnt==4){
+						if(td.eq(1).text()=='스프링' || td.eq(1).text()=='볼펜심' || td.eq(1).text()=='볼펜몸통' || td.eq(1).text()=='볼펜뚜껑') {
+							console.log(penLeadCnt);
+							console.log(penBodyCnt);
+							console.log(penCoverCnt);
+							if((penLeadCnt==penBodyCnt)&&(penBodyCnt==penCoverCnt)&&(penSpringCnt==penBodyCnt*2)){ 
+								arr.push(td.eq(1).text());
+								arr.push(td.eq(2).text());
+								arr.push(td.eq(3).text());
+								arr.push(td.eq(4).text());
+								arr.push(td.eq(5).text());
+								arr.push(td.eq(6).text());
+								tempData.push(arr);
+							}
+						}
+					}
+				}else{
+					alert("올바르지 못한 자재나 개수입니다.");
+				}
+			}); 
+
+			var tempDataJson = {"temp_process_id" : tempData}
+            console.log(JSON.stringify(tempDataJson));
+
+            $.ajax({
+            	type: "POST",
+            	url: "/insert_tempprocess",
+            	contentType : "application/json",
+                data: JSON.stringify(tempDataJson),  
+                success: function(data){
+                	alert('임시 처리 성공');
+                	load();
+                },
+                error: function(){alert("서버통신 오류");}
+            }); 
+            
+            
+	    });
+    	
+    	$(document).ready(function(){
+            load();
+            
+            //$("#total_amt_text").text("총 발주량");
+        });
+    	
+    	</script>
+	</div>
+</body>
+</html>

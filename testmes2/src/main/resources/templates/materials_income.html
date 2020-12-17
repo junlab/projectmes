@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>::: Spring with MyBatis :::</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <h3>원자재 입고 화면</h3>
+
+    <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
+    <h4>발주 자재 현황</h4>
+            <table class="board_list">
+                <thead>
+                    <tr>
+                    	<th>선택</th>
+                    	<th>제품명</th>
+                    	<th>원자재명</th>
+                        <th>발주량</th>
+                        <th>자재량</th>
+                        <th>상위자재명</th>
+                        <th>발주일</th>
+                    </tr>
+                </thead>
+                <tbody id="orderlist_ajax">	
+                
+                </tbody>
+            </table>
+            <div class="paging">
+            	<div>
+	            	<span id="total_amt_text">총 발주량</span>
+	            	총 발주량<input class="bt" type="text" id="total_amt" name="total_amt" 
+		            		style="width: 100px; margin-right: 200px; text-align: right;"/>
+		            <span id="income_amt_text">입고량</span>
+	            	입고량<input class="bt" type="text" id="income_amt" name="income_amt" 
+		            		style="width: 100px; margin-right: 50px; text-align: right;"/>
+					<input class="bt" type="button" id="btn_temp_income" 
+					name="btn_temp_income" value="입고"/>
+				</div>
+			</div>
+    </div>
+    	
+    	
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    	<script type="text/javascript">
+    	
+    	function doOpenCheck(chk){
+    	    var obj = document.getElementsByName("income_chk");
+    	    for(var i=0; i<obj.length; i++){
+    	        if(obj[i] != chk){
+    	            obj[i].checked = false;
+    	        }
+    	    }
+    	    
+    	    var tr = $(chk).parent().parent();
+			var td = tr.children();
+			var totalAmt = td.eq(3).text();
+			$("#total_amt").val(totalAmt);
+			
+    	    if(chk.checked == false){
+    	    	$("#total_amt").val("");
+    	    	$("#income_amt").val("");
+    	    }
+    	    
+    	}
+    	
+    	function load() { 
+    		$.ajax({
+	            url: "/orderlist",
+	            type: "POST",
+	            dataType: "json",
+	            success: function(data){
+	            	
+	            	$("#orderlist_ajax").children().remove()
+	            	var tags = '';
+	            	for(var i in data){
+	            		
+	            		tags += '<tr>'
+	            		tags += '<td><input type="checkbox" id="income_chk" name="income_chk" onclick="doOpenCheck(this);"/></td>'
+	            		tags += '<td>'+data[i].prodName+'</td>'+
+	            				'<td>'+data[i].rawMateName+'</td>'+
+	            				'<td>'+data[i].totalAmt+'</td>'+
+	            				'<td>'+data[i].incomingAmt+'</td>'+
+	            				'<td>'+data[i].parentNode+'</td>'+
+	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
+	            		tags += '</tr>'
+	            		/* tags += '<td><input type="button" id="addlist_del" name="addlist_del"'+
+	                        'value="수주 등록"'+'title="수주 등록"'+'/></td>' */
+	            	}
+	            	$("#orderlist_ajax").append(tags);
+	            },
+	            error: function(){
+	                alert("리스트 조회 에러");
+	            }
+	        });
+    	}
+        
+    	$('#btn_temp_income').on('click', function(){
+    		
+    		var tr = $("input[name='income_chk']:checked").parent().parent();
+			var td = tr.children();
+			
+			if(td.eq(2).text()=='안경테'||td.eq(2).text()=='안경렌즈'||td.eq(2).text()=='볼펜뚜껑'||td.eq(2).text()=='볼펜몸통'){
+				alert('반제품입니다. 원자재를 입고해주세요');
+				 $("#total_amt").val("");
+			}else{
+				if(parseInt($("#income_amt").val()) <= parseInt($("#total_amt").val())-parseInt(td.eq(4).text())){
+	    			var myincome = $("#income_amt").val();
+	        		//alert(myincome);
+	        		
+	    			var arr = new Array();
+	    			var rawMateName = td.eq(2).text();
+	    			var parentNode = td.eq(5).text();
+	    			var addDate = td.eq(6).text();
+	    			arr.push(rawMateName);
+	    			arr.push(parentNode);
+	    			arr.push(addDate);
+	    			arr.push(myincome);
+	    			
+	    			for(var i=0; i<arr.length; i++){
+	    				console.log(arr[i]);
+	    			}
+	    			
+	    			var jsondate = JSON.stringify(arr);
+	                var arrjson = {"temp_income_id" : arr}
+	                console.log(arrjson);
+	                
+	                $.ajax({
+	                	type: "POST",
+	                	url: "/insert_temp_income",
+	                	contentType : "application/json",
+	                    data: JSON.stringify(arrjson),  
+	                    success: function(data){
+	                    	alert('임시 입고처리 성공');
+	                    	load();
+	                    },
+	                    error: function(){alert("서버통신 오류");}
+	                });	
+
+	                $("#total_amt").val("");
+	    	    	$("#income_amt").val("");
+	    	    	
+	    		}else if($("#income_amt").val()==''){
+	    			alert("입고량이 없습니다.");
+	    		}else{
+	    			alert("발주량 보다 입고량이 많습니다. 품질검사 화면을 확인해주세요.");
+	    			$("#income_amt").val("");
+	    		}
+			}
+	    });
+    	
+    	$(document).ready(function(){
+            load();
+            
+            //$("#total_amt_text").text("총 발주량");
+        });
+    	
+    	</script>
+	</div>
+</body>
+</html>

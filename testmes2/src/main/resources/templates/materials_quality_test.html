@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>::: Spring with MyBatis :::</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <h3>원자재 품질 검사 화면</h3>
+
+    <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
+    <h4>임시 원자재 리스트</h4>
+            <table class="board_list">
+                <thead>
+                    <tr>
+                    	<th>선택</th>
+                    	<th>원자재명</th>
+                    	<th>상위자재명</th>
+                        <th>입고량</th>
+                        <th>발주일</th>
+                    </tr>
+                </thead>
+                <tbody id="temp_incomelist_ajax">
+                
+                </tbody>
+            </table>
+            <div class="paging">
+            	<div>
+	            	입고량<input class="bt" type="text" id="income_amt" name="income_amt" 
+		            		style="width: 100px; margin-right: 200px; text-align: right;"/>
+		            <span id="income_amt_text">입고량</span>
+	            	통과량<input class="bt" type="text" id="pass_amt" name="pass_amt" 
+		            		style="width: 100px; margin-right: 50px; text-align: right;"/>
+		            		<span id="income_amt_text">입고량</span>
+					<input class="bt" type="button" id="btn_income" 
+					name="btn_income" value="입고"/>
+				</div>
+			</div>
+    </div>
+    
+    	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    	<script type="text/javascript">
+    	
+    	function doOpenCheck(chk){
+    	    var obj = document.getElementsByName("temp_income_chk");
+    	    for(var i=0; i<obj.length; i++){
+    	        if(obj[i] != chk){
+    	            obj[i].checked = false;
+    	        }
+    	    }
+    	    
+    	    var tr = $(chk).parent().parent();
+			var td = tr.children();
+			var incomeAmt = td.eq(3).text();
+			$("#income_amt").val(incomeAmt);
+			
+    	    if(chk.checked == false){
+    	    	$("#income_amt").val("");
+    	    	$("#pass_amt").val("");
+    	    }
+    	    
+    	}
+    	
+    	function load() { 
+    		$.ajax({
+	            url: "/tempincomelist",
+	            type: "POST",
+	            dataType: "json",
+	            success: function(data){
+	            	$("#temp_incomelist_ajax").children().remove()
+	            	var tags = '';
+	            	for(var i in data){
+	            		
+	            		tags += '<tr>'
+	            		tags += '<td><input type="checkbox" id="temp_income_chk" name="temp_income_chk" onclick="doOpenCheck(this);"/></td>'
+	            		tags += '<td>'+data[i].rawMateName+'</td>'+
+	            				'<td>'+data[i].parentNode+'</td>'+
+	            				'<td>'+data[i].myIncomeAmt+'</td>'+
+	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
+	            		tags += '</tr>'
+	            	}
+	            	$("#temp_incomelist_ajax").append(tags);
+	            },
+	            error: function(){
+	                alert("리스트 조회 에러");
+	            }
+	        });
+    	}
+        
+    	$('#btn_income').on('click', function(){
+    		var tr = $("input[name='temp_income_chk']:checked").parent().parent();
+			var td = tr.children();
+			//alert(parseInt(td.eq(4).text()));
+    		if(parseInt($("#pass_amt").val()) <= parseInt($("#income_amt").val())){
+
+    			var passAmt = $("#pass_amt").val();
+    			//alert(passAmt);
+    				
+    			var arr = new Array();
+    			var mateName = td.eq(1).text();
+    			var parentNode = td.eq(2).text();
+    			var addDate = td.eq(4).text();
+    			arr.push(mateName);
+    			arr.push(parentNode);
+    			arr.push(addDate);
+    			arr.push(passAmt);
+    			
+    			for(var i=0; i<arr.length; i++){
+    				console.log(arr[i]);
+    			}
+    			
+    			var jsondate = JSON.stringify(arr);
+                var arrjson = {"materials_id" : arr}
+                console.log(arrjson);
+                
+                $.ajax({
+                	type: "POST",
+                	url: "/insert_materials",
+                	contentType : "application/json",
+                    data: JSON.stringify(arrjson),  
+                    success: function(data){
+                    	alert('자재 입고처리 성공');
+                    	load();
+                    },
+                    error: function(){alert("서버통신 오류");}
+                });	
+
+                $("#pass_amt").val("");
+    	    	$("#income_amt").val("");
+    		}else{
+    			alert("입고량 보다 통과량이 많습니다.");
+    			$("#pass_amt").val("");
+    		}
+    		
+    		
+	    }); 
+    	
+    	$(document).ready(function(){
+            load();
+
+        });
+    	
+    	</script>
+	</div>
+</body>
+</html>
