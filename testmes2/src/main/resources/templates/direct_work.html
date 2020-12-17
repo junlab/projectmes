@@ -210,20 +210,27 @@
 				}
 			}); 
 
-			var tempDataJson = {"temp_process_id" : tempData}
-            console.log(JSON.stringify(tempDataJson));
+			console.log(tempData);
+			
+			if(tempData.length==0){
+				alert("올바르지 못한 자재선택입니다.");
+			}else{
+				var tempDataJson = {"temp_process_id" : tempData}
+	            console.log(JSON.stringify(tempDataJson));
 
-            $.ajax({
-            	type: "POST",
-            	url: "/insert_tempprocess",
-            	contentType : "application/json",
-                data: JSON.stringify(tempDataJson),  
-                success: function(data){
-                	alert('임시 처리 성공');
-                	load();
-                },
-                error: function(){alert("서버통신 오류");}
-            }); 
+	            $.ajax({
+	            	type: "POST",
+	            	url: "/insert_tempprocess",
+	            	contentType : "application/json",
+	                data: JSON.stringify(tempDataJson),  
+	                success: function(data){
+	                	alert('임시 처리 성공');
+	                	load();
+	                },
+	                error: function(){alert("서버통신 오류");}
+	            });
+			}
+			 
             
             
 	    });
