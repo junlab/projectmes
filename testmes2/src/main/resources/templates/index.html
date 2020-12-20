@@ -1,0 +1,205 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+#container {
+	width: 960px;
+	margin: 0 auto;
+	text-align: center;
+}
+.tab {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+#tabcontent {
+	display: block;
+	background-color: green;
+	padding: 6px 12px;
+	color: #fff;
+}
+a{
+	display: inline-block;
+	color: #000;
+	text-align: center;
+	text-decoration: none;
+	padding: 14px 16px;
+	font-size: 17px;
+	transition: 0.3s;
+}
+a:visited { 
+	color: black; 
+	text-decoration: none;
+	
+	}
+
+
+li { 
+	float: left;
+	display: inline-block;
+	color: #000;
+	text-align: center;
+	text-decoration: none;
+	padding: 14px 16px;
+	font-size: 17px;
+}
+
+</style>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+	/* $(function() {
+		// tab operation
+		$('.tabmenu').click(function() {
+			var activeTab = $(this).attr('data-tab');
+			$('li').css('background-color', 'white');
+			$(this).css('background-color', 'green');
+			$.ajax({
+				type : 'GET',                 //get방식으로 통신
+				url : "/to_direcct_work",//activeTab + ".html",    //탭의 data-tab속성의 값으로 된 html파일로 통신
+				dataType : "html",            //html형식으로 값 읽기
+				error : function() {          //통신 실패시
+					alert('통신실패!');
+				},
+				success : function(data) {    //통신 성공시 탭 내용담는 div를 읽어들인 값으로 채운다.
+					$('#tabcontent').html(data);
+				}
+			});
+		});
+		$('#default').click();          
+	}); */
+	
+	$(document).ready(function(){
+
+	    //$("#tabcontent").load("templates/direct_work.html");
+		document.getElementById("tabcontent").innerHTML='<object type="text/html" data="direct_work.html" ></object>';
+	});
+
+</script>
+</head>
+<body>
+<div id="container">
+		<ul class="tab">
+			<li data-tab="direct_work" class='tabmenu' id="default"><a href="#">TabExample1</a></li>
+			<li data-tab="order_product" class='tabmenu'><a href="#">TabExample2</a></li>
+			<li data-tab="tab3" class='tabmenu'><a href="#">TabExample3</a></li>
+		</ul>
+		<div id="tabcontent"></div>
+	</div>
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+<!-- <style rel="stylesheet">
+.tabs {
+	font-size: 13px; line-height: 20px;
+}
+.tabs ul:before, .tabs ul:after {
+	content: "\0020"; display: block; height: 0; visibility: hidden;	
+} 
+.tabs ul:after { clear: both; }
+.tabs ul {
+	margin:0;
+	list-style:none;
+	padding: 0 6%;
+	border-bottom: 1px solid #e0e0e0;
+	zoom: 1;
+}
+
+.tabs ul li {
+	position: relative;
+	float: left;
+	margin: 0;
+}
+.tabs ul li a {
+	background: #f6f6f6;
+	font-weight: bold;
+	text-align: center;
+	display: block;
+	border: 1px solid #e0e0e0;
+	color: #909090;
+	text-shadow: 0 1px 0 rgba(255,255,255, 0.75);
+	padding: 6px 18px; margin: 0 5px -1px 0;
+	/* Border Radius */
+	-webkit-border-top-left-radius: 6px;
+	-webkit-border-top-right-radius: 6px;
+	-moz-border-radius-topleft: 6px;
+	-moz-border-radius-topright: 6px;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	text-decoration:none;
+}
+.tabs ul li a:hover {
+	border-color: #ccc;
+	color: #606060;
+}
+.tabs ul li.active a {
+	background: #fff;
+	border-color: #d4d4d4;
+	border-bottom: 1px solid #fff;
+	color: #dd390d;
+	margin-top: -4px;
+	padding-top: 10px;
+} 
+
+</style>
+-->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript">
+
+/* $(document).ready(function(){
+
+	$('#aaa').click(function(){
+	
+		$('#dynamic_div').load('./direct_work.html');
+		//document.getElementById("dynamic_div").innerHTML='<object type="text/html" data="direct_work.html" ></object>';
+		
+		return false;
+	
+	});
+
+}); */
+
+	function inputHtml(){
+		document.getElementById("innerhtml").innerHTML='<object type="text/html" data="direct_work.html"></object>';
+	}
+
+</script>
+</head>
+<body>
+	<div style="padding:10px;">
+		<input class="btn btn-primary" type="button" id="get_index" name="get_index" onclick="inputHtml();" value="홈 화면"><a ></a></input>
+		<input class="btn btn-primary" type="button" id="get_order_product" name="get_order_product" onclick="inputHtml();" value="제품 수주"><a></a></input>
+		<input class="btn btn-primary" type="button" id="get_materials_income" name="get_materials_income" onclick="inputHtml();" value="원자재 발주"><a></a></input>
+		<input class="btn btn-primary" type="button" id="get_materials_quality_test" name="get_materials_quality_test" onclick="inputHtml();" value="원자재 품질검사"><a></a></input>
+		<input class="btn btn-primary" type="button" id="get_direct_work" name="get_direct_work" onclick="inputHtml();" value="작업 공정 지시"><a></a></input>
+		<input class="btn btn-primary" type="button" id="get_process_quality_test" name="get_dirget_process_quality_testect_work" onclick="inputHtml();" value="작업 공정 품질검사"><a></a></input>
+		<input class="btn btn-primary" type="button" id="get_release_product" name="get_release_product" onclick="inputHtml();" value="제품 출고"><a></a></input>
+	</div>	
+	<div id="innerhtml">
+	<br/>
+	</div>
+	<!-- <div class="tabs">
+	  <ul>
+		<li class="active" id="aaa"><a href="#" id="trigger">Demo</a></li>
+		<li><a href="#">JavaScript</a></li>
+		<li><a href="#">HTML</a></li>
+		<li><a href="#">CSS</a></li>
+	  </ul>
+	  <div id="dynamic_div"></div>
+	</div> -->
+	
+
+</body>
+</html> 

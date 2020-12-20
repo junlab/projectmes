@@ -48,7 +48,7 @@ public class ProductReqController {
 
 	//@ResponseStatus(value=HttpStatus.OK)
 	
-		@Transactional
+	  @Transactional
 	  @RequestMapping(value = "/add", method = RequestMethod.POST)
 	  @ResponseBody
 	  public void add(HttpServletRequest request,ProdReq prodReq) { // 서비스 객체 호출 
@@ -84,6 +84,29 @@ public class ProductReqController {
 		  
 	  }
 
+	  @RequestMapping(value="/index") 
+	  public String index() {  
+		System.out.println("index");
+		return "/index";
+		
+	  }
+	  
+	  @RequestMapping(value="/releaseproduct") 
+	  public String release_product() {  
+		System.out.println("release_product");
+		return "/release_product";
+		
+	  }
+	  
+	  @RequestMapping(value="/to_direcct_work") 
+	  public String to_direcct_work() {  
+		System.out.println("to_direcct_work");
+		return "/to_direcct_work";
+		
+	  }
+	  
+	 
+	  
 	  @RequestMapping(value="/addform") 
 	  public String addForm() {  
 		System.out.println("add");
