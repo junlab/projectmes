@@ -104,7 +104,7 @@
         WHERE P.PROD_NAME=#{prodName} AND BOM_INFO.PARENT_MATE_CODE LIKE 'CODE_PEN%' 
                                 AND MATERIALS.MATE_TYPE_CODE!='MATE_GOODS'
 	</update>
-             <!--    WHEN BOM_INFO.PARENT_MATE_CODE = 'CODE_PEN_LEAD' THEN '볼펜심' -->
+
 	<delete id="del_addlist" parameterType="java.util.List">
 		DELETE FROM PRODREQ
 		<where>
@@ -173,10 +173,7 @@
 				#{passAmt}, #{parentNode}, '미처리', #{addDate}, #{mateNo})	
 		]]>	
 	</update> 
-	<!-- <update id="change_tempincomelist" parameterType="com.example.Entity.Materials">
-		UPDATE TEMP_INCOME_DB SET PASS_AMOUNT = PASS_AMOUNT + #{passAmt}
-		WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
-	</update> -->
+
 	<delete id="delete_tempincomelist" parameterType="com.example.Entity.Materials">
 		DELETE FROM TEMP_INCOME_DB WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
 	</delete>
@@ -185,12 +182,7 @@
 		UPDATE ORDER_MATE_DB SET INCOMIMG_AMOUNT = INCOMIMG_AMOUNT + #{passAmt}
 		WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
 	</update>
-	<!-- <delete id="delete_orderincomelist" parameterType="com.example.Entity.Materials">
-		DELETE FROM ORDER_MATE_DB WHERE TOTAL_AMOUNT = 
-			(SELECT INCOMIMG_AMOUNT FROM ORDER_MATE_DB 
-			WHERE RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode})
-			AND RAW_MATE_NAME=#{mateName} AND ADD_DATE=#{addDate} AND PARENT_NODE=#{parentNode}
-	</delete> -->
+
 	
 	
 	
@@ -346,11 +338,20 @@
 		</selectKey>
 		INSERT INTO END_PROD_DB(PROD_NAME, AMOUNT, ADD_DATE, PROD_NO) VALUES (#{prodName}, #{amount}, #{addDate}, #{_no})
 	</insert>
-	<delete id="del_prod_req" parameterType="com.example.Entity.EndProd">
-		DELETE FROM PRODREQ WHERE PROD_NAME=#{prodName} AND AMOUNT=#{amount} AND ADD_DATE=#{addDate}
-	</delete>
 	<delete id="del_tempprocessprod" parameterType="com.example.Entity.EndProd">
 		DELETE FROM TEMP_PROCESS_DB WHERE MATE_NAME=#{prodName} AND ADD_DATE=#{addDate}
+	</delete>
+	
+	
+	
+	<select id="endprod_list" parameterType="com.example.Entity.EndProd" resultMap="EndProdMap">
+		SELECT * FROM END_PROD_DB 
+	</select>
+	<delete id="del_endprod" parameterType="com.example.Entity.EndProd">
+		DELETE FROM END_PROD_DB WHERE PROD_NAME=#{prodName} AND ADD_DATE=#{addDate}
+	</delete>
+	<delete id="del_prod_req" parameterType="com.example.Entity.EndProd">
+		DELETE FROM PRODREQ WHERE PROD_NAME=#{prodName} AND AMOUNT=#{amount} AND ADD_DATE=#{addDate}
 	</delete>
 	
 </mapper>

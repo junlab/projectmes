@@ -4,14 +4,26 @@
     <title>::: Spring with MyBatis :::</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 
 <body>
+
+	<div style="padding:10px;">
+		<a href="/index"><button class="btn btn-primary" id="get_index" name="get_index">홈 화면</button></a>
+		<a href="/addform"><button class="btn btn-primary" id="get_order_product" name="get_order_product">제품 수주</button></a>
+		<a href="/orderlistform"><button class="btn btn-primary" id="get_materials_income" name="get_materials_income">원자재 발주</button></a>
+		<a href="/matetestform"><button class="btn btn-primary" id="get_materials_quality_test" name="get_materials_quality_test">원자재 품질검사</button></a>
+		<a href="/directwork"><button class="btn btn-primary" id="get_direct_work" name="get_direct_work">작업 공정 지시</button></a>
+		<a href="/tempprocess"><button class="btn btn-primary" id="get_process_quality_test" name="get_dirget_process_quality_testect_work">작업 공정 품질검사</button></a>
+		<a href="/releaseproduct"><button class="btn btn-primary" id="get_release_product" name="get_release_product">제품 출고</button></a>
+	</div>	
+
 <div id="part">
     <h3>작업지시 화면</h3>
 	<h4>발주 자재 현황의 개수와 맞아야 동작 가능</h4>
     <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
-    <h4>자재 리스트</h4>
+    <h5>자재 리스트</h5>
             <table class="board_list">
                 <thead>
                     <tr>
@@ -21,7 +33,6 @@
                     	<th>필요 공정</th>
                     	<th>수량</th>
                     	<th>상위 자재명</th>
-                    	<!-- <th>상태</th> -->
                         <th>발주일</th>
                     </tr>
                 </thead>
@@ -31,9 +42,9 @@
             </table>
             <div class="paging">
             	<div>
-	            	<input class="bt" type="button" id="btn_abrasion" 
+	            	<input class="btn" type="button" id="btn_abrasion" 
 					name="btn_income" value="연마" style="margin-right: 50px;"/>
-					<input class="bt" type="button" id="btn_assemble" 
+					<input class="btn" type="button" id="btn_assemble" 
 					name="btn_income" value="조립" style="margin-left: 50px;"/>
 				</div>
 			</div>
@@ -86,7 +97,6 @@
 	            				'<td>'+processName+'</td>'+
 	            				'<td>'+data[i].amt+'</td>'+
 	            				'<td>'+data[i].parentNode+'</td>'+
-	            				//'<td>'+data[i].workState+'</td>'+
 	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
 	            		tags += '</tr>'
 	            	}
@@ -193,9 +203,6 @@
 						}
 					}else if(td.eq(5).text()=='볼펜' && cnt==4){
 						if(td.eq(1).text()=='스프링' || td.eq(1).text()=='볼펜심' || td.eq(1).text()=='볼펜몸통' || td.eq(1).text()=='볼펜뚜껑') {
-							console.log(penLeadCnt);
-							console.log(penBodyCnt);
-							console.log(penCoverCnt);
 							if((penLeadCnt==penBodyCnt)&&(penBodyCnt==penCoverCnt)&&(penSpringCnt==penBodyCnt*2)){ 
 								arr.push(td.eq(1).text());
 								arr.push(td.eq(2).text());
@@ -212,13 +219,11 @@
 				}
 			}); 
 
-			console.log(tempData);
 			
 			if(tempData.length==0){
 				alert("올바르지 못한 자재선택입니다.");
 			}else{
 				var tempDataJson = {"temp_process_id" : tempData}
-	            console.log(JSON.stringify(tempDataJson));
 
 	            $.ajax({
 	            	type: "POST",
@@ -226,7 +231,7 @@
 	            	contentType : "application/json",
 	                data: JSON.stringify(tempDataJson),  
 	                success: function(data){
-	                	alert('임시 처리 성공');
+	                	alert('공정 지시 성공');
 	                	load();
 	                },
 	                error: function(){alert("서버통신 오류");}
@@ -239,8 +244,6 @@
     	
     	$(document).ready(function(){
             load();
-            
-            //$("#total_amt_text").text("총 발주량");
         });
     	
     	</script>

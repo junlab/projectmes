@@ -4,9 +4,21 @@
     <title>::: Spring with MyBatis :::</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 
 <body>
+
+	<div style="padding:10px;">
+		<a href="/index"><button class="btn btn-primary" id="get_index" name="get_index">홈 화면</button></a>
+		<a href="/addform"><button class="btn btn-primary" id="get_order_product" name="get_order_product">제품 수주</button></a>
+		<a href="/orderlistform"><button class="btn btn-primary" id="get_materials_income" name="get_materials_income">원자재 발주</button></a>
+		<a href="/matetestform"><button class="btn btn-primary" id="get_materials_quality_test" name="get_materials_quality_test">원자재 품질검사</button></a>
+		<a href="/directwork"><button class="btn btn-primary" id="get_direct_work" name="get_direct_work">작업 공정 지시</button></a>
+		<a href="/tempprocess"><button class="btn btn-primary" id="get_process_quality_test" name="get_dirget_process_quality_testect_work">작업 공정 품질검사</button></a>
+		<a href="/releaseproduct"><button class="btn btn-primary" id="get_release_product" name="get_release_product">제품 출고</button></a>
+	</div>		
+	
     <h3>원자재 입고 화면</h3>
 
     <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
@@ -27,18 +39,18 @@
                 
                 </tbody>
             </table>
-            <div class="paging">
-            	<div>
-	            	<span id="total_amt_text">총 발주량</span>
-	            	총 발주량<input class="bt" type="text" id="total_amt" name="total_amt" 
-		            		style="width: 100px; margin-right: 200px; text-align: right;"/>
-		            <span id="income_amt_text">입고량</span>
-	            	입고량<input class="bt" type="text" id="income_amt" name="income_amt" 
-		            		style="width: 100px; margin-right: 50px; text-align: right;"/>
-					<input class="bt" type="button" id="btn_temp_income" 
-					name="btn_temp_income" value="입고"/>
+            	<div style="margin-top: 10px; display: flex; justify-content: center;">
+            		<div>
+		            	<span id="total_amt_text">총 발주량</span>
+		            	<input type="text" id="total_amt" name="total_amt" 
+			            		style="width: 100px; margin-right: 100px; text-align: right;"/>
+			            <span id="income_amt_text">입고량</span>
+		            	<input  type="text" id="income_amt" name="income_amt" 
+			            		style="width: 100px; margin-right: 10px; text-align: right;"/>
+						<input class="btn" type="button" id="btn_temp_income" 
+						name="btn_temp_income" value="입고"/>
+					</div>
 				</div>
-			</div>
     </div>
     	
     	
@@ -85,8 +97,6 @@
 	            				'<td>'+data[i].parentNode+'</td>'+
 	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
 	            		tags += '</tr>'
-	            		/* tags += '<td><input type="button" id="addlist_del" name="addlist_del"'+
-	                        'value="수주 등록"'+'title="수주 등록"'+'/></td>' */
 	            	}
 	            	$("#orderlist_ajax").append(tags);
 	            },
@@ -107,7 +117,6 @@
 			}else{
 				if(parseInt($("#income_amt").val()) <= parseInt($("#total_amt").val())-parseInt(td.eq(4).text())){
 	    			var myincome = $("#income_amt").val();
-	        		//alert(myincome);
 	        		
 	    			var arr = new Array();
 	    			var rawMateName = td.eq(2).text();
@@ -152,8 +161,6 @@
     	
     	$(document).ready(function(){
             load();
-            
-            //$("#total_amt_text").text("총 발주량");
         });
     	
     	</script>

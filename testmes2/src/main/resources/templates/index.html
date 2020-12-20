@@ -158,40 +158,27 @@ li {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript">
 
-/* $(document).ready(function(){
-
-	$('#aaa').click(function(){
-	
-		$('#dynamic_div').load('./direct_work.html');
-		//document.getElementById("dynamic_div").innerHTML='<object type="text/html" data="direct_work.html" ></object>';
-		
-		return false;
-	
-	});
-
-}); */
-
-	function inputHtml(){
+	/* function inputHtml(){
 		document.getElementById("innerhtml").innerHTML='<object type="text/html" data="direct_work.html"></object>';
 	}
-
+ */
 </script>
 </head>
 <body>
 	<div style="padding:10px;">
-		<input class="btn btn-primary" type="button" id="get_index" name="get_index" onclick="inputHtml();" value="홈 화면"><a ></a></input>
-		<input class="btn btn-primary" type="button" id="get_order_product" name="get_order_product" onclick="inputHtml();" value="제품 수주"><a></a></input>
-		<input class="btn btn-primary" type="button" id="get_materials_income" name="get_materials_income" onclick="inputHtml();" value="원자재 발주"><a></a></input>
-		<input class="btn btn-primary" type="button" id="get_materials_quality_test" name="get_materials_quality_test" onclick="inputHtml();" value="원자재 품질검사"><a></a></input>
-		<input class="btn btn-primary" type="button" id="get_direct_work" name="get_direct_work" onclick="inputHtml();" value="작업 공정 지시"><a></a></input>
-		<input class="btn btn-primary" type="button" id="get_process_quality_test" name="get_dirget_process_quality_testect_work" onclick="inputHtml();" value="작업 공정 품질검사"><a></a></input>
-		<input class="btn btn-primary" type="button" id="get_release_product" name="get_release_product" onclick="inputHtml();" value="제품 출고"><a></a></input>
+		<a href="/index"><button class="btn btn-primary" id="get_index" name="get_index">홈 화면</button></a>
+		<a href="/addform"><button class="btn btn-primary" id="get_order_product" name="get_order_product">제품 수주</button></a>
+		<a href="/orderlistform"><button class="btn btn-primary" id="get_materials_income" name="get_materials_income">원자재 발주</button></a>
+		<a href="/matetestform"><button class="btn btn-primary" id="get_materials_quality_test" name="get_materials_quality_test">원자재 품질검사</button></a>
+		<a href="/directwork"><button class="btn btn-primary" id="get_direct_work" name="get_direct_work">작업 공정 지시</button></a>
+		<a href="/tempprocess"><button class="btn btn-primary" id="get_process_quality_test" name="get_dirget_process_quality_testect_work">작업 공정 품질검사</button></a>
+		<a href="/releaseproduct"><button class="btn btn-primary" id="get_release_product" name="get_release_product">제품 출고</button></a>
 	</div>	
 	<div id="innerhtml">
-	<br/>
+	
 	</div>
 	<!-- <div class="tabs">
-	  <ul>
+	  <ul><iframe id="iframe" src="/addform"/>
 		<li class="active" id="aaa"><a href="#" id="trigger">Demo</a></li>
 		<li><a href="#">JavaScript</a></li>
 		<li><a href="#">HTML</a></li>

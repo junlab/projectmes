@@ -31,27 +31,17 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 //@RestController -> 컨트롤러 안에 있는거 전부 @ResponseBody 달아주는거랑 똑같음
-//@RequestMapping(value= "/jsp")
 public class ProductReqController {
 	
 
 	@Autowired
 	private ProdReqService prodReqService;
-	//Request
-	
-	/*
-	 * @RequestMapping(value = "/index", method=RequestMethod.GET) public
-	 * ModelAndView index(ProdReq prodReq){ ModelAndView modelAndView = new
-	 * ModelAndView("/index"); return modelAndView; }
-	 */
-	 
 
-	//@ResponseStatus(value=HttpStatus.OK)
 	
 	  @Transactional
 	  @RequestMapping(value = "/add", method = RequestMethod.POST)
 	  @ResponseBody
-	  public void add(HttpServletRequest request,ProdReq prodReq) { // 서비스 객체 호출 
+	  public void add(HttpServletRequest request,ProdReq prodReq) {
 		  
 		  prodReq.setProdName(request.getParameter("prodName"));
 		  prodReq.setAmount(Integer.parseInt(request.getParameter("amount")));
@@ -62,7 +52,7 @@ public class ProductReqController {
 	  @Transactional
 	  @RequestMapping(value = "/addlist", method = RequestMethod.POST)
 	  @ResponseBody
-	  public List<ProdReq> addlist(HttpServletRequest request, ProdReq prodReq) { // 서비스 객체 호출 
+	  public List<ProdReq> addlist(HttpServletRequest request, ProdReq prodReq) { 
 		  List<ProdReq> listProd = this.prodReqService.add_list(prodReq);
 		  Collections.sort(listProd);
 		  
@@ -73,12 +63,9 @@ public class ProductReqController {
 	  @RequestMapping(value = "/del_addlist", method = RequestMethod.POST)
 	  @ResponseBody
 	  public void del_addlist(HttpServletRequest request,
-			  @RequestBody HashMap<String, ArrayList<String>> map){//@RequestBody List<String> addDate) { // 서비스 객체 호출 
+			  @RequestBody HashMap<String, ArrayList<String>> map){
 
-		  System.out.println("체크체크체크체크체크체크체크체크체크체크체크체크체크체크체크체크");
 		  List<String> datelist = map.get("del_id");
-		  for(String i : datelist){ System.out.println(i); }
-
 
 		  this.prodReqService.del_addlist(datelist);
 		  
@@ -97,15 +84,6 @@ public class ProductReqController {
 		return "/release_product";
 		
 	  }
-	  
-	  @RequestMapping(value="/to_direcct_work") 
-	  public String to_direcct_work() {  
-		System.out.println("to_direcct_work");
-		return "/to_direcct_work";
-		
-	  }
-	  
-	 
 	  
 	  @RequestMapping(value="/addform") 
 	  public String addForm() {  
@@ -158,12 +136,8 @@ public class ProductReqController {
 	  public void insert_temp_income(HttpServletRequest request,
 			  @RequestBody HashMap<String, ArrayList<String>> map){
 
-		  System.out.println("체크체크체크체크체크체크체크체크체크체크체크체크체크체크체크체크");
 		  List<String> tempincomelist = map.get("temp_income_id");
-		  
-		  for(String i : tempincomelist){
-			  System.out.println(i);
-		  }
+
 		  TempIncome tempIncome = new TempIncome(tempincomelist.get(0), tempincomelist.get(1), 
 				  tempincomelist.get(2), Integer.parseInt(tempincomelist.get(3)));
 
@@ -196,8 +170,6 @@ public class ProductReqController {
 				  mateincomelist.get(2), Integer.parseInt(mateincomelist.get(3)));
 
 		  this.prodReqService.insert_materials(realMate);
-		  //this.prodReqService.change_tempincomelist(realMate);
-		  //this.prodReqService.change_orderincomelist(realMate);
 	  }
 	  
 	  @Transactional
@@ -205,7 +177,6 @@ public class ProductReqController {
 	  @ResponseBody
 	  public List<Materials> materialslist(HttpServletRequest request, Materials materials) { // 서비스 객체 호출 
 		  List<Materials> listMaterials = this.prodReqService.materials_list(materials);
-		  //Collections.sort(listProd);
 		  
 		  return listMaterials;
 	  } 
@@ -218,8 +189,6 @@ public class ProductReqController {
 			  @RequestBody HashMap<String, ArrayList<ArrayList<String>>> map){
 
 		  System.out.println("innsert_tempprocess");
-		
-		  //List<String> tempProcessList = map.get("temp_process_id").get(0);
 		  
 		  List<Materials> processMateList = new ArrayList<Materials>();
 			
@@ -229,18 +198,7 @@ public class ProductReqController {
 		  										Integer.parseInt(matelist.get(3)), matelist.get(4), matelist.get(5));
 		 	processMateList.add(tempProcessMate); 
 		  }
-			
 
-			
-		  for(Materials i : processMateList){   
-			  System.out.println(i.getMateName());
-			  System.out.println(i.getMateTypeName());
-			  System.out.println(i.getProcessName());
-			  System.out.println(i.getAmt());
-			  System.out.println(i.getParentNode());
-			  System.out.println(i.getAddDate());
-		  }
-		  
 		  this.prodReqService.insert_tempprocess(processMateList);
 	  }
 	  
@@ -259,10 +217,7 @@ public class ProductReqController {
 	  public void insert_assemble_mate(HttpServletRequest request, @RequestBody HashMap<String, ArrayList<String>> map){ // 안경, 볼펜이 아닌 반제품 품질검사 통과
 
 		  List<String> assemblelist = map.get("assemblemate_id");
-		  
-		  for(String i : assemblelist){
-			  System.out.println(i);
-		  }
+
 		  TempProcess assemblemate = new TempProcess(assemblelist.get(0), Integer.parseInt(assemblelist.get(1)), 
 				  assemblelist.get(2));
 
@@ -275,14 +230,32 @@ public class ProductReqController {
 	  public void insert_prod(HttpServletRequest request, @RequestBody HashMap<String, ArrayList<String>> map){ // 안경, 볼펜이 아닌 반제품 품질검사 통과
 
 		  List<String> prodlist = map.get("prod_success_id");
-		  
-		  for(String i : prodlist){
-			  System.out.println(i);
-		  }
-		  EndProd endpord = new EndProd(prodlist.get(0), Integer.parseInt(prodlist.get(1)), 
+
+		  EndProd endprod = new EndProd(prodlist.get(0), Integer.parseInt(prodlist.get(1)), 
 				  prodlist.get(2));
 
-		  this.prodReqService.insert_prod(endpord);
+		  this.prodReqService.insert_prod(endprod);
+	  }
+	  
+	  @Transactional
+	  @RequestMapping(value = "/prodlist", method = RequestMethod.POST)
+	  @ResponseBody
+	  public List<EndProd> prodlist(HttpServletRequest request, EndProd endprod) { // 서비스 객체 호출 
+		  List<EndProd> listEndProd = this.prodReqService.endprod_list(endprod);
+
+		  
+		  return listEndProd;
+	  }
+	  
+	  @Transactional
+	  @RequestMapping(value = "/release_prod", method = RequestMethod.POST)
+	  @ResponseBody
+	  public void release_prod(HttpServletRequest request, @RequestBody HashMap<String, ArrayList<String>> map){
+
+		  List<String> endprod = map.get("del_endprod_id");
+		  EndProd delprod = new EndProd(endprod.get(0), Integer.parseInt(endprod.get(1)), endprod.get(2));
+		  this.prodReqService.release_prod(delprod);
+		  
 	  }
 	  
 	  //리퀘스트 바디 : json -> 자바객체 변환, 파라미터에 적용

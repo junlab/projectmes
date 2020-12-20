@@ -4,9 +4,20 @@
     <title>::: Spring with MyBatis :::</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 
 <body>
+	<div style="padding:10px;">
+		<a href="/index"><button class="btn btn-primary" id="get_index" name="get_index">홈 화면</button></a>
+		<a href="/addform"><button class="btn btn-primary" id="get_order_product" name="get_order_product">제품 수주</button></a>
+		<a href="/orderlistform"><button class="btn btn-primary" id="get_materials_income" name="get_materials_income">원자재 발주</button></a>
+		<a href="/matetestform"><button class="btn btn-primary" id="get_materials_quality_test" name="get_materials_quality_test">원자재 품질검사</button></a>
+		<a href="/directwork"><button class="btn btn-primary" id="get_direct_work" name="get_direct_work">작업 공정 지시</button></a>
+		<a href="/tempprocess"><button class="btn btn-primary" id="get_process_quality_test" name="get_dirget_process_quality_testect_work">작업 공정 품질검사</button></a>
+		<a href="/releaseproduct"><button class="btn btn-primary" id="get_release_product" name="get_release_product">제품 출고</button></a>
+	</div>		
+
     <h3>공정처리 품질 검사 화면</h3>
 
     <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
@@ -28,8 +39,8 @@
             </table>
             <div class="paging">
             	<div>
-		            		<span id="income_amt_text">입고량</span>
-					<input class="bt" type="button" id="btn_pass_process" 
+		            <span id="income_amt_text">입고량</span>
+					<input class="btn" type="button" id="btn_pass_process" 
 					name="btn_pass_process" value="통과"/>
 				</div>
 			</div>
@@ -49,7 +60,6 @@
     	    var tr = $(chk).parent().parent();
 			var td = tr.children();
 			var incomeAmt = td.eq(2).text();
-			//$("#pass_process_amt").val(incomeAmt);
 			
     	    if(chk.checked == false){
     	    	$("#income_process_amt").val("");
@@ -118,8 +128,6 @@
 
     		 // 들어오는 품질검사 목록이 최종 제품일경우
 				if((td.eq(1).text()=='안경') || (td.eq(1).text()=='볼펜')){
-					//var passAmt = parseInt($("#pass_process_amt").val());
-	    			//alert(passAmt);
 	    				
 	    			var arr = new Array();
 	    			var mateName = td.eq(1).text();
@@ -128,14 +136,9 @@
 	    			arr.push(mateName);
 	    			arr.push(prodAmt);
 	    			arr.push(addDate);
-	    			
-	    			for(var i=0; i<arr.length; i++){
-	    				console.log(arr[i]);
-	    			}
-	    			
+
 	    			var jsondate = JSON.stringify(arr);
 	                var arrjson = {"prod_success_id" : arr}
-	                console.log(arrjson);
 	                
 	                $.ajax({
 	                	type: "POST",
@@ -155,7 +158,6 @@
 	    		}else{
 	    			
 	    			var passAmt = $("#pass_process_amt").val();
-	    			//alert(passAmt);
 	    				
 	    			var arr = new Array();
 	    			var mateName = td.eq(1).text();
@@ -164,15 +166,9 @@
 	    			arr.push(mateName);
 	    			arr.push(passAmt);
 	    			arr.push(addDate);
-	    			
-	    			
-	    			for(var i=0; i<arr.length; i++){
-	    				console.log(arr[i]);
-	    			}
-	    			
+
 	    			var jsondate = JSON.stringify(arr);
 	                var arrjson = {"assemblemate_id" : arr}
-	                console.log(arrjson);
 	                
 	                $.ajax({
 	                	type: "POST",
@@ -189,11 +185,7 @@
 	                $("#income_process_amt").val("");
 	    	    	$("#pass_process_amt").val("");
 	    		}
-				
-    		
-    		
-    		
-    		
+				 		
 	    }); 
     	
     	$(document).ready(function(){
@@ -202,6 +194,6 @@
         });
     	
     	</script>
-	</div>
+
 </body>
 </html>

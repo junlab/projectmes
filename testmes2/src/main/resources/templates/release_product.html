@@ -4,9 +4,20 @@
     <title>::: Spring with MyBatis :::</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 
 <body>
+	<div style="padding:10px;">
+		<a href="/index"><button class="btn btn-primary" id="get_index" name="get_index">홈 화면</button></a>
+		<a href="/addform"><button class="btn btn-primary" id="get_order_product" name="get_order_product">제품 수주</button></a>
+		<a href="/orderlistform"><button class="btn btn-primary" id="get_materials_income" name="get_materials_income">원자재 발주</button></a>
+		<a href="/matetestform"><button class="btn btn-primary" id="get_materials_quality_test" name="get_materials_quality_test">원자재 품질검사</button></a>
+		<a href="/directwork"><button class="btn btn-primary" id="get_direct_work" name="get_direct_work">작업 공정 지시</button></a>
+		<a href="/tempprocess"><button class="btn btn-primary" id="get_process_quality_test" name="get_dirget_process_quality_testect_work">작업 공정 품질검사</button></a>
+		<a href="/releaseproduct"><button class="btn btn-primary" id="get_release_product" name="get_release_product">제품 출고</button></a>
+	</div>		
+
     <h3>제품 출고</h3>
 	
 	 <div class="board_list_wrap">
@@ -25,7 +36,7 @@
                 </tbody>
             </table>
             <div class="paging">
-				<input class="bt" type="button" id="btn_release_prod" 
+				<input class="btn" type="button" id="btn_release_prod" 
 				name="btn_release_prod" value="제품 출고"/>
 			</div>
             
@@ -37,7 +48,16 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript">
-    	//var prodName = '${listProd.prodName}';
+    	
+    	function doOpenCheck(chk){
+    	    var obj = document.getElementsByName("endprod_chk");
+    	    for(var i=0; i<obj.length; i++){
+    	        if(obj[i] != chk){
+    	            obj[i].checked = false;
+    	        }
+    	    }
+    	}
+    	
     	
     	function load() { 
     		$.ajax({
@@ -51,15 +71,13 @@
 	            	for(var i in data){
 	            		
 	            		tags += '<tr>'
-	            		tags += '<td><input type="checkbox" id="del_chk" name="del_chk"/></td>'
+	            		tags += '<td><input type="checkbox" id="endprod_chk" name="endprod_chk" onclick="doOpenCheck(this);"/></td>'
 	            		tags += '<td>'+data[i].prodName+'</td>'+
 	            				'<td>'+data[i].amount+'</td>'+
 	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
 	            		tags += '</tr>'
-	            		/* tags += '<td><input type="button" id="addlist_del" name="addlist_del"'+
-	                        'value="수주 등록"'+'title="수주 등록"'+'/></td>' */
 	            	}
-	            	$("#addlist_ajax").append(tags);
+	            	$("#prodlist_ajax").append(tags);
 	            },
 	            error: function(){
 	                alert("리스트 조회 에러");
@@ -67,88 +85,48 @@
 	        });
     	}
     	
-    	function del_addlist(){
-    		var cnt = $("input[name='del_chk']:checked").length;
-            var arr = new Array();
-            $("input[name='del_chk']:checked").each(function(i) {
-            	var tr = $("input[name='del_chk']:checked").parent().parent().eq(i);
-				var td = tr.children();
-				
-				var addDate = td.eq(3).text();
-				arr.push(addDate);
-            });
-            
-            for(var i=0; i<arr.length; i++){
-				console.log(arr[i]);
-			}
-            console.log(JSON.stringify(arr));
-            
-            //var arrjson = {"del_id" : arr}
-            if(cnt == 0){
-                alert("선택된 글이 없습니다.");
-            }
-        }
+    
 
     	
 		$(document).ready(function(){
             load();
         });
 
-		$('#btn_insert_add').on('click', function(){
-	        $.ajax({
-	            url: "/add",
-	            type: "POST",
-	            data: $("#form_add").serialize(),
-	            success: function(data){
-	            	console.log("success");
-	            	alert("발주 성공");
-	            	load();
-	            },
-	            error: function(){
-	                alert("serialize err");
-	            }
-	        });
-	        //$("#form input").val(""); // form 아이디를 가진 엘리먼트의 자식중에 input을 찾음
-	        $("input#prodName").val("");
-	        $("input#amount").val("");
-	    });
 		
-		$('#btn_addlist_del').on('click', function(){
-			var cnt = $("input[name='del_chk']:checked").length;
-            var arr = new Array();
-            $("input[name='del_chk']:checked").each(function(i) {
-            	var tr = $("input[name='del_chk']:checked").parent().parent().eq(i);
-				var td = tr.children();
-				
-				var addDate = td.eq(3).text();
-				arr.push(addDate);
-            });
-            
-            /* for(var i=0; i<arr.length; i++){
-				console.log(arr[i]);
-			} */
-            
-            var jsondate = JSON.stringify(arr);
-            var arrjson = {"del_id" : arr}
-            console.log(arrjson);
-            
-            
-            if(cnt == 0){
-                alert("선택된 글이 없습니다.");
-            }
-            
-			$.ajax({
-            	type: "POST",
-            	url: "/del_addlist",
-            	contentType : "application/json",
-                data: JSON.stringify(arrjson),  //{"del_id" : arr}, /* JSON.stringify(arr), */
-                success: function(data){
-                	alert('삭제 성공.');
-                	load();
-                },
-                error: function(){alert("서버통신 오류");}
-            });	
+		$('#btn_release_prod').on('click', function(){
+			var cnt = $("input[name='endprod_chk']:checked").length;
+			var arr = new Array();
+			if(cnt == 0){
+	        	alert("선택된 제품이 없습니다.");
+	        }else{
+	        	
+	            $("input[name='endprod_chk']:checked").each(function(i) {
+	            	var tr = $("input[name='endprod_chk']:checked").parent().parent().eq(i);
+					var td = tr.children();
+					
+					arr.push(td.eq(1).text());
+					arr.push(td.eq(2).text());
+					arr.push(td.eq(3).text());
+	            });
+	            
+	            
+	            var arrjson = {"del_endprod_id" : arr}
+	            console.log(arrjson);
+	            
+				$.ajax({
+	            	type: "POST",
+	            	url: "/release_prod",
+	            	contentType : "application/json",
+	                data: JSON.stringify(arrjson), 
+	                success: function(data){
+	                	alert('제품 출고');
+	                	load();
+	                },
+	                error: function(){alert("서버통신 오류");}
+	            });	
+	        }
 		});
+		
     </script>
 </html>
 

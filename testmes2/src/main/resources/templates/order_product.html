@@ -4,9 +4,20 @@
     <title>::: Spring with MyBatis :::</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 </head>
 
 <body>
+	<div style="padding:10px;">
+		<a href="/index"><button class="btn btn-primary" id="get_index" name="get_index">홈 화면</button></a>
+		<a href="/addform"><button class="btn btn-primary" id="get_order_product" name="get_order_product">제품 수주</button></a>
+		<a href="/orderlistform"><button class="btn btn-primary" id="get_materials_income" name="get_materials_income">원자재 발주</button></a>
+		<a href="/matetestform"><button class="btn btn-primary" id="get_materials_quality_test" name="get_materials_quality_test">원자재 품질검사</button></a>
+		<a href="/directwork"><button class="btn btn-primary" id="get_direct_work" name="get_direct_work">작업 공정 지시</button></a>
+		<a href="/tempprocess"><button class="btn btn-primary" id="get_process_quality_test" name="get_dirget_process_quality_testect_work">작업 공정 품질검사</button></a>
+		<a href="/releaseproduct"><button class="btn btn-primary" id="get_release_product" name="get_release_product">제품 출고</button></a>
+	</div>		
+	
     <h3>수주 등록</h3>
 	
 	 <div class="board_list_wrap">
@@ -25,7 +36,7 @@
                 </tbody>
             </table>
             <div class="paging">
-				<input class="bt" type="button" id="btn_addlist_del" 
+				<input class="btn" type="button" id="btn_addlist_del" 
 				name="btn_addlist_del" value="삭제"/>
 			</div>
             <!-- <div class="paging">
@@ -68,7 +79,7 @@
 	    </form>
 	    
 	    <div class="paging">
-        	<input class="bt" type="button" id="btn_insert_add" name="btn_insert_add"
+        	<input class="btn" type="button" id="btn_insert_add" name="btn_insert_add"
             	value="수주 등록" title="수주 등록" />
     	</div>
 	</div>
@@ -96,8 +107,6 @@
 	            				'<td>'+data[i].amount+'</td>'+
 	            				'<td id="id_addDate" name="id_addDate">'+data[i].addDate+'</td>'
 	            		tags += '</tr>'
-	            		/* tags += '<td><input type="button" id="addlist_del" name="addlist_del"'+
-	                        'value="수주 등록"'+'title="수주 등록"'+'/></td>' */
 	            	}
 	            	$("#addlist_ajax").append(tags);
 	            },
@@ -117,13 +126,7 @@
 				var addDate = td.eq(3).text();
 				arr.push(addDate);
             });
-            
-            for(var i=0; i<arr.length; i++){
-				console.log(arr[i]);
-			}
-            console.log(JSON.stringify(arr));
-            
-            //var arrjson = {"del_id" : arr}
+
             if(cnt == 0){
                 alert("선택된 글이 없습니다.");
             }
@@ -148,7 +151,6 @@
 	                alert("serialize err");
 	            }
 	        });
-	        //$("#form input").val(""); // form 아이디를 가진 엘리먼트의 자식중에 input을 찾음
 	        $("input#prodName").val("");
 	        $("input#amount").val("");
 	    });
@@ -163,14 +165,9 @@
 				var addDate = td.eq(3).text();
 				arr.push(addDate);
             });
-            
-            /* for(var i=0; i<arr.length; i++){
-				console.log(arr[i]);
-			} */
-            
+
             var jsondate = JSON.stringify(arr);
             var arrjson = {"del_id" : arr}
-            console.log(arrjson);
             
             
             if(cnt == 0){
@@ -181,7 +178,7 @@
             	type: "POST",
             	url: "/del_addlist",
             	contentType : "application/json",
-                data: JSON.stringify(arrjson),  //{"del_id" : arr}, /* JSON.stringify(arr), */
+                data: JSON.stringify(arrjson),  
                 success: function(data){
                 	alert('삭제 성공.');
                 	load();

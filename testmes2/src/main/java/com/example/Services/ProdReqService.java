@@ -129,9 +129,20 @@ public class ProdReqService {
 		this.prodReqDAO.insert_assemble_mate(assemblemate);
 	}
 
-	public void insert_prod(EndProd endpord) {
+	public void insert_prod(EndProd endprod) {
 		// TODO Auto-generated method stub
-		this.prodReqDAO.insert_prod(endpord);
+		this.prodReqDAO.insert_prod(endprod);
+	}
+
+	public List<EndProd> endprod_list(EndProd endprod) {
+		// TODO Auto-generated method stub
+		List<EndProd> listEndPord = this.prodReqDAO.endprod_list(endprod);
+		return listEndPord;
+	}
+
+	public void release_prod(EndProd endprod) {
+		// TODO Auto-generated method stub
+		this.prodReqDAO.release_prod(endprod);
 	}
 	
 	

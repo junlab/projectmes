@@ -266,11 +266,22 @@ public class ProdReqDAO {
 		this.sqlSessionTemplate.update(namespace+"change_orderlist_process", assemblemate);
 	}
 
-	public void insert_prod(EndProd endpord) {
+	public void insert_prod(EndProd endprod) {
 		// TODO Auto-generated method stub
-		this.sqlSessionTemplate.insert(namespace+"insert_prod", endpord);
-		this.sqlSessionTemplate.delete(namespace+"del_tempprocessprod", endpord);
-		this.sqlSessionTemplate.delete(namespace+"del_prod_req", endpord);
+		this.sqlSessionTemplate.insert(namespace+"insert_prod", endprod);
+		this.sqlSessionTemplate.delete(namespace+"del_tempprocessprod", endprod);
+		
+	}
+
+	public List<EndProd> endprod_list(EndProd endprod) {
+		// TODO Auto-generated method stub
+		return sqlSessionTemplate.selectList(namespace+"endprod_list", endprod);
+	}
+
+	public void release_prod(EndProd endprod) {
+		// TODO Auto-generated method stub
+		this.sqlSessionTemplate.delete(namespace+"del_endprod", endprod);
+		this.sqlSessionTemplate.delete(namespace+"del_prod_req", endprod);
 	}
 
 
