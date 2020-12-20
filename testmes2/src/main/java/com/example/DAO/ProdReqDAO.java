@@ -42,7 +42,6 @@ public class ProdReqDAO {
 		// 발주날짜로 비교해서 제품수주, 원자재발주 리스트 삭제
 		this.sqlSessionTemplate.delete(namespace+"del_addlist", datelist);
 		System.out.println("db에 들어갔는지 체크");
-		//this.sqlSessionTemplate.delete(namespace+"del_orderlist", datelist);
 	}
 
 	public List<OrderMate> order_list(OrderMate orderMate) {
@@ -63,13 +62,10 @@ public class ProdReqDAO {
 	public void insert_materials(Materials realMate) {
 		// TODO Auto-generated method stub
 		this.sqlSessionTemplate.update(namespace+"insert_materials", realMate);
-		
-		
-		//this.sqlSessionTemplate.update(namespace+"change_tempincomelist", realMate);
+
 		this.sqlSessionTemplate.delete(namespace+"delete_tempincomelist", realMate);
 		
 		this.sqlSessionTemplate.update(namespace+"change_orderincomelist", realMate);
-		//this.sqlSessionTemplate.delete(namespace+"delete_orderincomelist", realMate);
 		
 	}
 
@@ -100,8 +96,7 @@ public class ProdReqDAO {
 			}
 			this.sqlSessionTemplate.update(namespace+"update_orderlist", mate);
 		}
-		
-		//this.sqlSessionTemplate.update(namespace+"change_matelist", mate);
+
 		System.out.println("보내기 성공");
 	}
 
@@ -174,81 +169,6 @@ public class ProdReqDAO {
 				}
 			}
 		}
-		
-		/*
-		int glassesFrameCnt=0;
-		int glassesLensCnt=0;
-		int glassesScrewCnt=0;
-		int glassesNoseCnt=0;
-		int penCoverCnt=0;
-		int penBodyCnt=0;
-		int penLeadCnt=0;
-		int penSpringCnt=0;
-		
-		
-		for(Materials mate : processMateList) { // 각각의 개수를 먼저 구한다.
-			if(mate.getParentNode().equals("안경")) {
-				if(mate.getMateName().equals("안경테")){
-					glassesFrameCnt = mate.getAmt();
-				}else if(mate.getMateName().equals("안경렌즈")) {
-					glassesLensCnt = mate.getAmt();
-				}else if(mate.getMateName().equals("나사")) {
-					glassesScrewCnt = mate.getAmt();
-				}else{
-					glassesNoseCnt = mate.getAmt();
-				}
-			}else if(mate.getParentNode().equals("볼펜")) {
-				if(mate.getMateName().equals("볼펜뚜껑")){
-					penCoverCnt = mate.getAmt();
-				}else if(mate.getMateName().equals("볼펜몸통")) {
-					penBodyCnt = mate.getAmt();
-				}else if(mate.getMateName().equals("볼펜심")) {
-					penLeadCnt = mate.getAmt();
-				}else{
-					penSpringCnt = mate.getAmt();
-				}
-			}
-		}
-		
-		for(Materials mate : processMateList) {
-			int prodcnt=0;
-			if(mate.getParentNode().equals("안경")) { // 안경 조립일 경우
-				if(mate.getMateName().equals("안경테")){
-					for(int i=glassesFrameCnt; i>=1; i--) {
-						if((glassesLensCnt>=i*2)&&(penBodyCnt>=i)&&(penLeadCnt>=i)) {
-							prodcnt=i;
-							mate.setAmt(prodcnt);
-							this.sqlSessionTemplate.insert(namespace+"insert_temp_assemble_glasses", mate); // 임시 공정 품질검사 테이블에 넘김.
-						}
-					}
-				}else{
-					System.out.println(prodcnt);
-					mate.setAmt(prodcnt);
-					this.sqlSessionTemplate.update(namespace+"update_materials_assemble_glasses_others", mate);
-				}	
-			}
-			else if(mate.getParentNode().equals("볼펜")) { // 볼펜 조립일 경우
-				if(mate.getMateName().equals("볼펜뚜껑")){
-					for(int i=penCoverCnt; i>=1; i--) {
-						if((penSpringCnt>=i*2)) {
-							prodcnt=i;
-							mate.setAmt(prodcnt);
-							this.sqlSessionTemplate.insert(namespace+"insert_temp_assemble_pen", mate); // 임시 공정 품질검사 테이블에 넘김.
-							this.sqlSessionTemplate.update(namespace+"update_materials_assemble_pen_others", mate);
-							//this.sqlSessionTemplate.update(namespace+"update_materials_assemble_spring", mate);
-							
-						}
-					}
-				}else if(mate.getMateName().equals("스프링")){
-					System.out.println(prodcnt);
-					mate.setAmt(prodcnt);
-					this.sqlSessionTemplate.update(namespace+"update_materials_assemble_spring", mate);
-				}else{
-					this.sqlSessionTemplate.update(namespace+"update_materials_assemble_pen_others", mate);
-				}
-			}
-		}
-		*/
 	}
 
 	

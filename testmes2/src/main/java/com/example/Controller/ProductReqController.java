@@ -30,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
-//@RestController -> 컨트롤러 안에 있는거 전부 @ResponseBody 달아주는거랑 똑같음
 public class ProductReqController {
 	
 
@@ -45,7 +44,7 @@ public class ProductReqController {
 		  
 		  prodReq.setProdName(request.getParameter("prodName"));
 		  prodReq.setAmount(Integer.parseInt(request.getParameter("amount")));
-		  System.out.println(prodReq.getProdName()+prodReq.getAmount());
+
 		  this.prodReqService.add(prodReq);
 	  }
 	  
@@ -125,7 +124,6 @@ public class ProductReqController {
 	  @ResponseBody
 	  public List<OrderMate> orderlist(HttpServletRequest request, OrderMate orderMate) { // 서비스 객체 호출 
 		  List<OrderMate> listOrder = this.prodReqService.order_list(orderMate);
-		  //Collections.sort(listOrder);
 		  
 		  return listOrder;
 	  } 
@@ -160,12 +158,8 @@ public class ProductReqController {
 	  public void insert_materials(HttpServletRequest request,
 			  @RequestBody HashMap<String, ArrayList<String>> map){
 
-		  System.out.println("체크체크체크체크체크체크체크체크체크체크체크체크체크체크체크체크");
 		  List<String> mateincomelist = map.get("materials_id");
-		  
-		  for(String i : mateincomelist){
-			  System.out.println(i);
-		  }
+
 		  Materials realMate = new Materials(mateincomelist.get(0), mateincomelist.get(1), 
 				  mateincomelist.get(2), Integer.parseInt(mateincomelist.get(3)));
 
@@ -257,8 +251,6 @@ public class ProductReqController {
 		  this.prodReqService.release_prod(delprod);
 		  
 	  }
-	  
-	  //리퀘스트 바디 : json -> 자바객체 변환, 파라미터에 적용
-	  //리스폰스 바디 : 자바객체 -> json변환, 메서드에 적용
+
 
 }
