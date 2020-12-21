@@ -46,6 +46,7 @@ public class ProductReqController {
 		  prodReq.setAmount(Integer.parseInt(request.getParameter("amount")));
 
 		  this.prodReqService.add(prodReq);
+		 
 	  }
 	  
 	  @Transactional
@@ -72,50 +73,43 @@ public class ProductReqController {
 
 	  @RequestMapping(value="/index") 
 	  public String index() {  
-		System.out.println("index");
-		return "/index";
+		return "index";
 		
 	  }
 	  
 	  @RequestMapping(value="/releaseproduct") 
 	  public String release_product() {  
-		System.out.println("release_product");
-		return "/release_product";
+		return "release_product";
 		
 	  }
 	  
 	  @RequestMapping(value="/addform") 
 	  public String addForm() {  
-		System.out.println("add");
-		return "/order_product";
+		return "order_product";
 		
 	  }
 	  
 	  @RequestMapping(value="/orderlistform") 
 	  public String orderlistForm() {  
-		System.out.println("order_list");
-		return "/materials_income";
+		return "materials_income";
 		
 	  }
 	  
 	  @RequestMapping(value="/matetestform") 
 	  public String matetestForm() {  
-		System.out.println("material_test");
-		return "/materials_quality_test";
+		return "materials_quality_test";
 		
 	  }
 	  
 	  @RequestMapping(value="/directwork") 
 	  public String directworkForm() {  
-		System.out.println("directwork_list");
-		return "/direct_work";
+		return "direct_work";
 		
 	  }
 	  
 	  @RequestMapping(value="/tempprocess") 
 	  public String tempProcessForm() {  
-		System.out.println("tempprocess_list");
-		return "/process_quality_test";
+		return "process_quality_test";
 		
 	  }
 	  
