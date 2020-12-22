@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-	<head>
+<head>
 	<meta charset="UTF-8">
 	<title></title>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
+
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script type="text/javascript">
 
 </script>
+
+
 </head>
 <body>
-	<div style="padding:10px;">
+<div style="overflow-y:hidden; overflow-x:hidden; height:100vh; ">
+	<div style="padding:10px; position: fixed;">
 		<a href="/index"><button class="btn btn-primary" id="get_index" name="get_index">홈 화면</button></a>
 		<a href="/addform"><button class="btn btn-primary" id="get_order_product" name="get_order_product">제품 수주</button></a>
 		<a href="/orderlistform"><button class="btn btn-primary" id="get_materials_income" name="get_materials_income">원자재 발주</button></a>
@@ -19,10 +24,10 @@
 		<a href="/directwork"><button class="btn btn-primary" id="get_direct_work" name="get_direct_work">작업 공정 지시</button></a>
 		<a href="/tempprocess"><button class="btn btn-primary" id="get_process_quality_test" name="get_dirget_process_quality_testect_work">작업 공정 품질검사</button></a>
 		<a href="/releaseproduct"><button class="btn btn-primary" id="get_release_product" name="get_release_product">제품 출고</button></a>
-	</div>	
-	<div id="innerhtml">
-		제품 자동 발주 시스템
 	</div>
-
+	<div style="display: flex; width:100%; height:100%; align-items: center; justify-content: center;">
+			<span style=" font-size: 400%; font-weight: border; color: black; ">제품 자동 발주 시스템</span>
+	</div>	
+</div>
 </body>
 </html> 

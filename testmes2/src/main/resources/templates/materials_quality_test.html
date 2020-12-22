@@ -102,11 +102,10 @@
     	$('#btn_income').on('click', function(){
     		var tr = $("input[name='temp_income_chk']:checked").parent().parent();
 			var td = tr.children();
-			//alert(parseInt(td.eq(4).text()));
+
     		if(parseInt($("#pass_amt").val()) <= parseInt($("#income_amt").val())){
 
     			var passAmt = $("#pass_amt").val();
-    			//alert(passAmt);
     				
     			var arr = new Array();
     			var mateName = td.eq(1).text();
@@ -153,6 +152,6 @@
         });
     	
     	</script>
-	</div>
+
 </body>
 </html>

@@ -237,7 +237,7 @@
 		UPDATE ORDER_MATE_DB SET INCOMIMG_AMOUNT=(select AMOUNT from MATERIALS_STORE_DB WHERE MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate}) 
 											WHERE RAW_MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND ADD_DATE=#{addDate}
 	</update>
-	<!-- UPDATE ORDER_MATE_DB SET INCOMIMG_AMOUNT=0 WHERE RAW_MATE_NAME=#{mateName} AND PARENT_NODE=#{parentNode} AND AND ADD_DATE=#{addDate} -->
+
 	
 	
 	
