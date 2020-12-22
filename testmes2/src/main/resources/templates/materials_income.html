@@ -21,7 +21,7 @@
 
     <div class="board_list_wrap" style="overflow-y:auto; overflow-x:hidden">
     <h5>발주 자재 현황</h5>
-            <table class="board_list">
+            <table class="board_list" style="text-align: center">
                 <thead>
                     <tr>
                     	<th>선택</th>
@@ -151,7 +151,7 @@
 	    		}else if($("#income_amt").val()==''){
 	    			alert("입고량이 없습니다.");
 	    		}else{
-	    			alert("발주량 보다 입고량이 많습니다. 품질검사 화면을 확인해주세요.");
+	    			alert("발주량 보다 입고량이 많습니다.");
 	    			$("#income_amt").val("");
 	    		}
 			}
